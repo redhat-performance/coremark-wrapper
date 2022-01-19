@@ -1,0 +1,224 @@
+#!/bin/bash
+#
+#                         License
+#
+# Copyright (C) 2021  David Valin dvalin@redhat.com
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+#
+# This script automates the execution of coremark.  It will determine the
+# set of default run parameters based on the system configuration.
+#
+test_name="coremark"
+arguments="$@"
+chars=`echo $0 | awk -v RS='/' 'END{print NR-1}'`
+run_dir=`echo $0 | cut -d'/' -f 1-${chars}`
+
+setup_done=0
+out_file=""
+use_pbench_version=0
+show_usage=0
+cpu_add=0
+powers_2=0
+
+#
+# Clone the repo that contains the common code and tools
+#
+tools_git=https://github.com/dvalinrh/test_tools
+
+found=0
+for arg in "$@"; do
+	if [ $found -eq 1 ]; then
+		tools_git=$arg
+		found=0
+	fi
+	if [[ $arg == "--tools_git" ]]; then
+		found=1
+	fi
+
+	#
+	# We do the usage check here, as we do not want to be calling
+	# the common parsers then checking for usage here.  Doing so will
+	# result in the script exiting with out giving the test options.
+	#
+	if [[ $arg == "--usage" ]]; then
+		show_usage=1
+	fi
+done
+
+#
+# Check to see if the test tools directory exists.  If it does, we do not need to
+# clone the repo.
+#
+if [ ! -d "test_tools" ]; then
+        git clone $tools_git
+        if [ $? -ne 0 ]; then
+                echo pulling git $tools_git failed.
+                exit
+        fi
+fi
+
+if [ $show_usage -eq 1 ]; then
+	echo "$1 Usage:"
+	echo "  --cpu_add n: add n cpus each iteration until hit max cpus"
+	echo "  --powers_2: starting from 1 cpu, keep doubling the cpus until max cpus"
+	source test_tools/general_setup --usage
+	exit 0
+fi
+
+#
+# Variables set by general setup.
+#
+# TOOLS_BIN: points to the tool directory
+# to_home_root: home directory
+# to_configuration: configuration information
+# to_times_to_run: number of times to run the test
+# to_pbench: Run the test via pbench
+# to_pbench_copy: Copy the data to the pbench repository, not move_it.
+# to_puser: User running pbench
+# to_run_label: Label for the run
+# to_user: User on the test system running the test
+# to_sys_type: for results info, basically aws, azure or local
+# to_sysname: name of the system
+# to_tuned_setting: tuned setting
+#
+
+source test_tools/general_setup "$@"
+
+ARGUMENT_LIST=(
+        "cpu_add"
+)
+
+NO_ARGUMENTS=(
+	"powers_2"
+        "usage"
+)
+
+# read arguments
+opts=$(getopt \
+	--longoptions "$(printf "%s:," "${ARGUMENT_LIST[@]}")" \
+	--longoptions "$(printf "%s," "${NO_ARGUMENTS[@]}")" \
+	--name "$(basename "$0")" \
+	--options "h" \
+	-- "$@"
+)
+
+eval set --$opts
+
+while [[ $# -gt 0 ]]; do
+	case "$1" in
+		--cpu_add)
+			echo cpu_add $2
+			cpu_add=$2
+			shift 2
+		;;
+		--powers_2)
+			powers_2=1
+			shift 1
+		;;
+		--usage)
+			usage $0
+		;;
+		-h)
+			usage $0
+		;;
+		--)
+			break
+		;;
+		*)
+			echo option not found $1
+			usage $0
+		;;
+	esac
+done
+
+if [ $powers_2 -ne 0 ] && [ $cpu_add -ne 0 ]; then
+	echo Error, can not designate both cpu_add and powers_2
+	exit 1
+fi
+rm -rf coremark 2> /dev/null
+git clone --depth 1 --branch v1.01 https://github.com/eembc/coremark
+numb_cpus=`cat /proc/cpuinfo | grep processor | wc -l`
+pushd coremark > /dev/null
+
+execute_coremark()
+{
+	touch *.c
+	touch */*.c
+	make XCFLAGS="-DMULTITHREAD=${2} -DUSE_PTHREAD -pthread"
+	#
+	# Move results
+	#
+	mv run1.log run1_iter=${1}_threads=${2}.log
+	mv run2.log run2_iter=${1}_threads=${2}.log
+}
+
+#
+# Iteration of test.
+#
+for iter in $(seq 1 1 $to_times_to_run); do
+	if [ $powers_2 -eq 1 ]; then
+		cpu_count=1
+		while  [ $cpu_count -lt $numb_cpus ]; do
+			execute_coremark $iter $cpu_count
+			let "cpu_count=$cpu_count*2"
+		done
+		execute_coremark $iter $numb_cpus
+		continue;
+	fi
+	if [ $cpu_add -ne  0]; then
+		cpu_count=1
+		while  [ $cpu_count -lt $numb_cpus ]; do
+			execute_coremark $iter $cpu_count
+			let "cpu_count=${cpu_count}+${cpu_add}"
+		done
+		execute_coremark $iter $numb_cpus
+		continue;
+	fi
+	#
+	# Just the single case.
+	#
+	execute_coremark $iter $numb_cpus
+done
+
+#
+# Create the csv file.
+#
+csv_file=`mktemp /tmp/coremark_csv.XXXXX`
+for i in  `ls run*log`; do
+	iteration=`echo $i | cut -d'=' -f2 | cut -d'_' -f1`
+	threads=`echo $i | cut -d'=' -f3 | cut -d'.' -f1`
+	test_iters=`grep "Iterations/" $i | cut -d':' -f2 | sed "s/ //g"`
+	echo ${iteration}:${threads}:${test_iters} >> $csv_file
+done
+echo "iteration:threads:test passes" > coremark_results.csv
+sort -n $csv_file >> coremark_results.csv
+
+if [ $to_pbench -eq 0 ]; then
+	rm -rf /tmp/results_${test_name}_*
+	RESULTSDIR=/tmp/results_${test_name}_${to_tuned_setting}_$(date "+%Y.%m.%d-%H.%M.%S")
+	mkdir $RESULTSDIR
+	cp coremark_results.csv $RESULTSDIR
+	cp run*log $RESULTSDIR
+	pushd /tmp > /dev/null
+	ln -s ${RESULTSDIR} results_${test_name}_${to_tuned_setting}
+	mv  ${test_name}_*.out ${RESULTSDIR}
+	tar hcf results_${test_name}_${to_tuned_setting}.tar results_${test_name}_${to_tuned_setting}
+	cp  results_${test_name}_${to_tuned_setting}.tar results_pbench_${test_name}_${to_tuned_setting}.tar
+	popd > /dev/null
+fi
+popd > /dev/null
+
+
