@@ -148,8 +148,11 @@ if [ $powers_2 -ne 0 ] && [ $cpu_add -ne 0 ]; then
 	echo Error, can not designate both cpu_add and powers_2
 	exit 1
 fi
-rm -rf coremark 2> /dev/null
-git clone --depth 1 --branch v1.01 https://github.com/eembc/coremark
+
+cd /${to_home_root}/${to_user}
+if [ ! -d "coremark" ]; then
+	git clone --depth 1 --branch v1.01 https://github.com/eembc/coremark
+fi
 numb_cpus=`cat /proc/cpuinfo | grep processor | wc -l`
 pushd coremark > /dev/null
 
@@ -178,7 +181,7 @@ for iter in $(seq 1 1 $to_times_to_run); do
 		execute_coremark $iter $numb_cpus
 		continue;
 	fi
-	if [ $cpu_add -ne  0]; then
+	if [ $cpu_add -ne  0 ]; then
 		cpu_count=1
 		while  [ $cpu_count -lt $numb_cpus ]; do
 			execute_coremark $iter $cpu_count
@@ -218,7 +221,12 @@ if [ $to_pbench -eq 0 ]; then
 	tar hcf results_${test_name}_${to_tuned_setting}.tar results_${test_name}_${to_tuned_setting}
 	cp  results_${test_name}_${to_tuned_setting}.tar results_pbench_${test_name}_${to_tuned_setting}.tar
 	popd > /dev/null
+else
+        source ~/.bashrc
+        echo $TOOLS_BIN/execute_pbench --cmd_executing "$0" $arguments --test ${test_name} --spacing 11
+        $TOOLS_BIN/execute_pbench --cmd_executing "$0" $arguments --test ${test_name} --spacing 11
 fi
 popd > /dev/null
 
 
+rm $csv_file
