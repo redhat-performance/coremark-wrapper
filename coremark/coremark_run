@@ -22,6 +22,7 @@
 # set of default run parameters based on the system configuration.
 #
 
+coremark_version="v1.01"
 test_name="coremark"
 arguments="$@"
 chars=`echo $0 | awk -v RS='/' 'END{print NR-1}'`
@@ -210,6 +211,7 @@ generate_results()
 		cp coremark_results.csv $RESULTSDIR
 		cp *_summary $RESULTSDIR
 		cp run*log $RESULTSDIR
+		echo $coremark_version > $RESULTSDIR/coremark_version
 		pushd /tmp > /dev/null
 		ln -s ${RESULTSDIR} results_${test_name}_${to_tuned_setting}
 		mv  ${test_name}_*.out ${RESULTSDIR}
@@ -301,7 +303,7 @@ fi
 
 cd /${to_home_root}/${to_user}
 if [ ! -d "coremark" ]; then
-	git clone --depth 1 --branch v1.01 https://github.com/eembc/coremark
+	git clone --depth 1 --branch ${coremark_version} https://github.com/eembc/coremark
 fi
 numb_cpus=`cat /proc/cpuinfo | grep processor | wc -l`
 pushd coremark > /dev/null
