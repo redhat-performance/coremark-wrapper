@@ -22,6 +22,7 @@
 # set of default run parameters based on the system configuration.
 #
 
+commit="none"
 coremark_version="v1.01"
 test_name="coremark"
 arguments="$@"
@@ -38,6 +39,7 @@ powers_2=0
 usage()
 {
 	echo "Usage $1:"
+	echo "  --commit <n>: git commit to use, default is the tag ${coremark_version}"
 	echo "  --cpu_add <n>: starting at cpu count of 1, add this number of cpus to each run"
 	echo "  --powers_2s: starting at 1, run the number of cpus by powers of 2's"
 	source test_tools/general_setup --usage
@@ -211,7 +213,11 @@ generate_results()
 		cp coremark_results.csv $RESULTSDIR
 		cp *_summary $RESULTSDIR
 		cp run*log $RESULTSDIR
-		echo $coremark_version > $RESULTSDIR/coremark_version
+		if [[ $commit == "none" ]]; then
+			echo tag: $coremark_version > $RESULTSDIR/coremark_version
+		else
+			echo commit: ${commit} > $RESULTSDIR/coremark_version
+		fi
 		pushd /tmp > /dev/null
 		ln -s ${RESULTSDIR} results_${test_name}_${to_tuned_setting}
 		mv  ${test_name}_*.out ${RESULTSDIR}
@@ -250,6 +256,7 @@ install_test_tools
 source test_tools/general_setup "$@"
 
 ARGUMENT_LIST=(
+	"commit"
 	"cpu_add"
 )
 
@@ -271,8 +278,11 @@ eval set --$opts
 
 while [[ $# -gt 0 ]]; do
 	case "$1" in
+		--commit)
+			commit=$2
+			shift 2
+		;;
 		--cpu_add)
-			echo cpu_add $2
 			cpu_add=$2
 			shift 2
 		;;
@@ -303,7 +313,16 @@ fi
 
 cd /${to_home_root}/${to_user}
 if [ ! -d "coremark" ]; then
-	git clone --depth 1 --branch ${coremark_version} https://github.com/eembc/coremark
+	if [[ $commit == "none" ]]; then
+		git clone --depth 1 --branch ${coremark_version} https://github.com/eembc/coremark
+	else
+		git clone https://github.com/eembc/coremark
+		pushd coremark > /dev/null
+		git checkout ${commit}
+		popd > /dev/null
+
+	fi
+	
 fi
 numb_cpus=`cat /proc/cpuinfo | grep processor | wc -l`
 pushd coremark > /dev/null
