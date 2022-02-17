@@ -1,4 +1,4 @@
-#!/bin/bash
+[p!/bin/bash
 #
 #                         License
 #
@@ -210,8 +210,7 @@ generate_results()
 	if [ $to_pbench -eq 0 ]; then
 		rm -rf /tmp/results_${test_name}_*
 		RESULTSDIR=/tmp/results_${test_name}_${to_tuned_setting}_$(date "+%Y.%m.%d-%H.%M.%S")
-		mkdir $RESULTSDIR
-        	ln -s ${RESULTSDIR} results_pbench_speccpu_${to_tuned_setting}
+		mkdir ${RESULTSDIR}
 
 		cp coremark_results.csv $RESULTSDIR
 		cp *_summary $RESULTSDIR
@@ -223,9 +222,10 @@ generate_results()
 		fi
 		pushd /tmp > /dev/null
 		ln -s ${RESULTSDIR} results_${test_name}_${to_tuned_setting}
+        	ln -s ${RESULTSDIR} results_pbench_${test_name}_${to_tuned_setting}
 		mv  ${test_name}_*.out ${RESULTSDIR}
 		tar hcf results_${test_name}_${to_tuned_setting}.tar results_${test_name}_${to_tuned_setting}
-		tar hcf results_pbench_${test_name}_${to_tuned_setting}.tar  $RESULTSDIR
+		tar hcf results_pbench_${test_name}_${to_tuned_setting}.tar results_${test_name}_${to_tuned_setting}
 		popd > /dev/null
 	else
 		source ~/.bashrc
