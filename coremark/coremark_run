@@ -341,6 +341,6 @@ else
 	run_coremark
 
 	generate_results
-	exit 0
 fi
+exit 0
 
