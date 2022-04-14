@@ -237,7 +237,7 @@ generate_results()
 }
 
 
-install_test_tools
+install_test_tools "$@"
 
 #
 # Variables set by general setup.
