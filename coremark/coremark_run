@@ -29,6 +29,9 @@ test_name="coremark"
 arguments="$@"
 chars=`echo $0 | awk -v RS='/' 'END{print NR-1}'`
 run_dir=`echo $0 | cut -d'/' -f 1-${chars}`
+if [[ $run_dir == "./"* ]]; then
+	run_dir=`pwd`
+fi
 cd $run_dir
 
 setup_done=0
@@ -52,7 +55,7 @@ install_test_tools()
 	#
 	# Clone the repo that contains the common code and tools
 	#
-	tools_git=test_tools-wrappers
+	tools_git=https://github.com/redhat-performance/test_tools-wrappers
 	found=0
 	for arg in "$@"; do
 		if [ $found -eq 1 ]; then
