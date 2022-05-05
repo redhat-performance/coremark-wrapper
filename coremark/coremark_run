@@ -322,7 +322,10 @@ if [ $powers_2 -ne 0 ] && [ $cpu_add -ne 0 ]; then
 	exit 1
 fi
 
-cd /${to_home_root}/${to_user}
+if [ -d /${to_home_root}/${to_user} ]; then
+	cd /${to_home_root}/${to_user}
+fi
+
 if [ ! -d "coremark" ]; then
 	if [[ $commit == "none" ]]; then
 		git clone --depth 1 --branch ${coremark_version} https://github.com/eembc/coremark
