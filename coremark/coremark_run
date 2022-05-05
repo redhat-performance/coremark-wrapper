@@ -49,7 +49,7 @@ usage()
 	echo "  --commit <n>: git commit to use, default is the tag ${coremark_version}"
 	echo "  --cpu_add <n>: starting at cpu count of 1, add this number of cpus to each run"
 	echo "  --powers_2s: starting at 1, run the number of cpus by powers of 2's"
-	source test_tools-wrappers/general_setup --usage
+	source test_tools/general_setup --usage
 	exit
 }
 
@@ -83,7 +83,7 @@ install_test_tools()
 	# Check to see if the test tools directory exists.  If it does, we do not need to
 	# clone the repo.
 	#
-	if [ ! -d "test_tools-wrappers" ]; then
+	if [ ! -d "test_tools" ]; then
 		git clone $tools_git
 		if [ $? -ne 0 ]; then
 			echo pulling git $tools_git failed.
@@ -261,7 +261,7 @@ install_test_tools "$@"
 # to_tuned_setting: tuned setting
 #
 
-source test_tools-wrappers/general_setup "$@"
+source test_tools/general_setup "$@"
 
 ARGUMENT_LIST=(
 	"commit"
