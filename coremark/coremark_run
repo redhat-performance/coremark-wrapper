@@ -240,8 +240,8 @@ generate_results()
 		popd > /dev/null
 	else
 		source ~/.bashrc
-		echo $TOOLS_BIN/execute_pbench --cmd_executing "$0" $arguments --test ${test_name} --spacing 11
-		$TOOLS_BIN/execute_pbench --cmd_executing "$0" $arguments --test ${test_name} --spacing 11
+		echo $TOOLS_BIN/execute_via_pbench --cmd_executing "$0" $arguments --test ${test_name} --spacing 11 --pbench_stats $to_pstats
+		$TOOLS_BIN/execute_via_pbench --cmd_executing "$0" $arguments --test ${test_name} --spacing 11 --pbench_stats $to_pstats
 	fi
 	popd > /dev/null
 	rm $csv_file
