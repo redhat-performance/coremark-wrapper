@@ -235,7 +235,7 @@ generate_results()
 		ln -s ${RESULTSDIR} results_${test_name}_${to_tuned_setting}
         	ln -s ${RESULTSDIR} results_pbench_${test_name}_${to_tuned_setting}
 		mv  ${test_name}_*.out ${RESULTSDIR}
-		cp ${cur_dir}/meta_data.yml .
+		cp ${curdir}/meta_data.yml .
 		tar hcf results_${test_name}_${to_tuned_setting}.tar results_${test_name}_${to_tuned_setting}
 		tar hcf results_pbench_${test_name}_${to_tuned_setting}.tar results_${test_name}_${to_tuned_setting}
 		popd > /dev/null
@@ -346,6 +346,7 @@ pushd coremark > /dev/null
 
 if [ $to_pbench -eq 1 ]; then
         source ~/.bashrc
+	cd $curdir
         echo $TOOLS_BIN/execute_via_pbench --cmd_executing "$0" $arguments --test ${test_name} --spacing 11 --pbench_stats $to_pstats
         $TOOLS_BIN/execute_via_pbench --cmd_executing "$0" $arguments --test ${test_name} --spacing 11 --pbench_stats $to_pstats
 else
