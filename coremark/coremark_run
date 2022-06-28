@@ -235,7 +235,7 @@ generate_results()
 		ln -s ${RESULTSDIR} results_${test_name}_${to_tuned_setting}
         	ln -s ${RESULTSDIR} results_pbench_${test_name}_${to_tuned_setting}
 		mv  ${test_name}_*.out ${RESULTSDIR}
-		cp ${curdir}/meta_data.yml .
+		cp ${curdir}/meta_data.yml ${RESULTSDIR}
 		tar hcf results_${test_name}_${to_tuned_setting}.tar results_${test_name}_${to_tuned_setting}
 		tar hcf results_pbench_${test_name}_${to_tuned_setting}.tar results_${test_name}_${to_tuned_setting}
 		popd > /dev/null
