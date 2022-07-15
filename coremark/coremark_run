@@ -28,6 +28,15 @@ coremark_version="v1.01"
 test_name="coremark"
 arguments="$@"
 
+if [ ! -f "/tmp/${test_name}.out" ]; then
+	command="${0} $@"
+	echo $command
+	$command &> /tmp/${test_name}.out
+	cat /tmp/${test_name}.out
+	rm /tmp/${test_name}.out
+	exit
+fi
+
 curdir=`pwd`
 if [[ $0 == "./"* ]]; then
 	chars=`echo $0 | awk -v RS='/' 'END{print NR-1}'`
@@ -224,6 +233,12 @@ generate_results()
 		mkdir ${RESULTSDIR}
 
 		cp coremark_results.csv $RESULTSDIR
+		lines=`wc -l coremark_results.csv | cut -d' ' -f1`
+		if [ $lines -lt 2 ]; then
+			echo Failed > $RESULTSDIR/test_results_report
+		else
+			echo Ran > $RESULTSDIR/test_results_report
+		fi
 		cp *_summary $RESULTSDIR
 		cp run*log $RESULTSDIR
 		if [[ $commit == "none" ]]; then
@@ -235,6 +250,7 @@ generate_results()
 		ln -s ${RESULTSDIR} results_${test_name}_${to_tuned_setting}
         	ln -s ${RESULTSDIR} results_pbench_${test_name}_${to_tuned_setting}
 		mv  ${test_name}_*.out ${RESULTSDIR}
+		mv /tmp/${test_name}.out ${RESULTSDIR}
 		cp ${curdir}/meta_data.yml ${RESULTSDIR}
 		tar hcf results_${test_name}_${to_tuned_setting}.tar results_${test_name}_${to_tuned_setting}
 		tar hcf results_pbench_${test_name}_${to_tuned_setting}.tar results_${test_name}_${to_tuned_setting}
