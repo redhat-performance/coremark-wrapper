@@ -114,6 +114,13 @@ execute_coremark()
 {
 	touch *.c
 	touch */*.c
+	#
+	# Ubuntu breaking without this setting.
+	#
+	uname -a | grep -q Ubuntu
+	if [ $? -eq 0]; then
+		declare -x PORT_DIR="linux64"
+	fi
 	make XCFLAGS="-DMULTITHREAD=${2} -DUSE_PTHREAD -pthread"
 	#
 	# Move results
