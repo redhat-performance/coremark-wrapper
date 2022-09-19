@@ -261,7 +261,7 @@ generate_results()
 		cp ${curdir}/meta_data.yml ${RESULTSDIR}
 		tar hcf results_${test_name}_${to_tuned_setting}.tar results_${test_name}_${to_tuned_setting}
 		rm -f results_pbench.tar
-		find results_${test_name}_${to_tuned_setting} -type f | tar --transform 's/.*\///g' -cf results_pbench.tar --files-from=/dev/stdin
+		find -L results_${test_name}_${to_tuned_setting} -type f | tar --transform 's/.*\///g' -cf results_pbench.tar --files-from=/dev/stdin
 		tar hcf results_pbench_${test_name}_${to_tuned_setting}.tar results_${test_name}_${to_tuned_setting}
 		popd > /dev/null
 	fi
