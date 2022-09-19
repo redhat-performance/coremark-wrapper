@@ -170,7 +170,7 @@ run_coremark()
 		echo ${iteration}:${threads}:${test_iters} >> $csv_file
 	done
 	echo "iteration:threads:test passes" > coremark_results.csv
-	sort -n $csv_file >> coremark_results.csv
+	sort -n $csv_file >> results.csv
 }
 
 produce_report()
