@@ -127,10 +127,10 @@ execute_coremark()
 	if [ $? -eq 0 ]; then
 		declare -x PORT_DIR="linux64"
 	fi
-	make_flags="XCFLAGS=\"-DMULTITHREAD=${2} -DUSE_PTHREAD -pthread\""
-	make ${make_flags}
-	if [ $? -ne ]; then
-		exit_out "Failed: make ${makeflags}" 1
+	make_flags="-DMULTITHREAD=${2} -DUSE_PTHREAD -pthread"
+	make XCFLAGS="${make_flags}"
+	if [ $? -ne 0 ]; then
+		exit_out "Failed: make XCFLAGS=\"${make_flags}\"" 1
 	fi
 	#
 	# Move results
