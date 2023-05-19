@@ -28,13 +28,20 @@ coremark_version="v1.01"
 test_name="coremark"
 arguments="$@"
 
+exit_out()
+{
+	echo $1
+	exit $2
+}
+
 if [ ! -f "/tmp/${test_name}.out" ]; then
 	command="${0} $@"
 	echo $command
 	$command &> /tmp/${test_name}.out
+	rtc=$?
 	cat /tmp/${test_name}.out
 	rm /tmp/${test_name}.out
-	exit
+	exit $?
 fi
 
 curdir=`pwd`
@@ -65,7 +72,7 @@ usage()
 	echo "  --cpu_add <n>: starting at cpu count of 1, add this number of cpus to each run"
 	echo "  --powers_2s: starting at 1, run the number of cpus by powers of 2's"
 	source test_tools/general_setup --usage
-	exit
+	exit 0
 }
 
 install_test_tools()
@@ -101,8 +108,7 @@ install_test_tools()
 	if [ ! -d "test_tools" ]; then
 		git clone $tools_git test_tools
 		if [ $? -ne 0 ]; then
-			echo pulling git $tools_git failed.
-			exit
+			exit_out "pulling git $tools_git failed." 1
 		fi
 	fi
 	if [ $show_usage -eq 1 ]; then
@@ -121,7 +127,11 @@ execute_coremark()
 	if [ $? -eq 0 ]; then
 		declare -x PORT_DIR="linux64"
 	fi
-	make XCFLAGS="-DMULTITHREAD=${2} -DUSE_PTHREAD -pthread"
+	make_flags="XCFLAGS=\"-DMULTITHREAD=${2} -DUSE_PTHREAD -pthread\""
+	make ${make_flags}
+	if [ $? -ne ]; then
+		exit_out "Failed: make ${makeflags}" 1
+	fi
 	#
 	# Move results
 	#
@@ -346,8 +356,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ $powers_2 -ne 0 ] && [ $cpu_add -ne 0 ]; then
-	echo Error, can not designate both cpu_add and powers_2
-	exit 1
+	exit_out "Error, can not designate both cpu_add and powers_2" 1
 fi
 
 if [ -d /${to_home_root}/${to_user} ]; then
@@ -356,27 +365,42 @@ fi
 
 if [ ! -d "coremark" ]; then
 	if [[ $commit == "none" ]]; then
-		git clone --depth 1 --branch ${coremark_version} https://github.com/eembc/coremark
+		GIT_TERMINAL_PROMPT=0 git clone --depth 1 --branch ${coremark_version} https://github.com/eembc/coremark
+		if [ $? - ne 0 ]; then
+			exit_out "Failed: git clone --depth 1 --branch ${coremark_version} https://github.com/eembc/coremark" 1
+		fi
 	else
-		git clone https://github.com/eembc/coremark
+		GIT_TERMINAL_PROMPT=0 git clone https://github.com/eembc/coremark
+		if [ $? -ne 0 ]; then
+			exit_out "Failed: git clone https://github.com/eembc/coremark" 1
+		fi
 		pushd coremark > /dev/null
-		git checkout ${commit}
+		GIT_TERMINAL_PROMPT=0 git checkout ${commit}
+		if [ $? -ne 0 ]; then
+			exit_out "Failed: git checkout ${commit}" 1
+		fi
 		popd > /dev/null
 
 	fi
-	
 fi
+
 numb_cpus=`cat /proc/cpuinfo | grep processor | wc -l`
 pushd coremark > /dev/null
 
 if [ $to_pbench -eq 1 ]; then
         source ~/.bashrc
 	cd $curdir
-        echo $TOOLS_BIN/execute_via_pbench --cmd_executing "$0" $arguments --test ${test_name} --spacing 11 --pbench_stats $to_pstats
-        $TOOLS_BIN/execute_via_pbench --cmd_executing "$0" $arguments --test ${test_name} --spacing 11 --pbench_stats $to_pstats
+	#
+	# Arguments to pbecnh, change as required.
+	#
+	pbench_args="--cmd_executing \"$0\" $arguments --test ${test_name} --spacing 11 --pbench_stats $to_pstats"
+        echo $TOOLS_BIN/execute_via_pbench ${pbench_args}
+        $TOOLS_BIN/execute_via_pbench ${pbench_args}
+	if  [ $? -ne 0 ]; then
+		exit_out "Error: $TOOLS_BIN/execute_via_pbench ${pbench_args}" 1
+	fi
 else
 	run_coremark
-
 	generate_results
 fi
 exit 0
