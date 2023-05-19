@@ -130,7 +130,7 @@ execute_coremark()
 	make_flags="XCFLAGS=\"-DMULTITHREAD=${2} -DUSE_PTHREAD -pthread\""
 	make ${make_flags}
 	if [ $? -ne ]; then
-		exit "Failed: make ${makeflags}
+		exit_out "Failed: make ${makeflags}" 1
 	fi
 	#
 	# Move results
