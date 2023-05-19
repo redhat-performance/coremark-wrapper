@@ -108,7 +108,7 @@ install_test_tools()
 	if [ ! -d "test_tools" ]; then
 		git clone $tools_git test_tools
 		if [ $? -ne 0 ]; then
-			exit "pulling git $tools_git failed." 1
+			exit_out "pulling git $tools_git failed." 1
 		fi
 	fi
 	if [ $show_usage -eq 1 ]; then
