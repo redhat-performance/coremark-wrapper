@@ -389,10 +389,14 @@ pushd coremark > /dev/null
 if [ $to_pbench -eq 1 ]; then
         source ~/.bashrc
 	cd $curdir
-        echo $TOOLS_BIN/execute_via_pbench --cmd_executing "$0" $arguments --test ${test_name} --spacing 11 --pbench_stats $to_pstats
-        $TOOLS_BIN/execute_via_pbench --cmd_executing "$0" $arguments --test ${test_name} --spacing 11 --pbench_stats $to_pstats
+	#
+	# Arguments to pbecnh, change as required.
+	#
+	pbench_args="--cmd_executing \"$0\" $arguments --test ${test_name} --spacing 11 --pbench_stats $to_pstats"
+        echo $TOOLS_BIN/execute_via_pbench ${pbench_args}
+        $TOOLS_BIN/execute_via_pbench ${pbench_args}
 	if  [ $? -ne 0 ]; then
-		exit_out "Error: $TOOLS_BIN/execute_via_pbench --cmd_executing "$0" $arguments --test ${test_name} --spacing 11 --pbench_stats $to_pstats" 1
+		exit_out "Error: $TOOLS_BIN/execute_via_pbench ${pbench_args}" 1
 	fi
 else
 	run_coremark
