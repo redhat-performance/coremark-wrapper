@@ -14,6 +14,7 @@ To run:
 
 
 Options
+```
   --commit <n>: git commit to use, default is the tag v1.01
   --cpu_add <n>: starting at cpu count of 1, add this number of cpus to each run
   --powers_2s: starting at 1, run the number of cpus by powers of 2's
@@ -32,5 +33,6 @@ General options
   --tuned_setting: used in naming the tar file, default for RHEL is the current active tuned.  For non
     RHEL systems, default is none.
   --usage: this usage message.
+```
 
 Note: The script does not install pbench for you.  You need to do that manually.
