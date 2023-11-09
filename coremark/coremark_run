@@ -129,7 +129,7 @@ execute_coremark()
 	#
 	# Ubuntu breaking without this setting.
 	#
-	if [[ "`/root/test_tools/detect_os`" == "ubuntu" ]]; then
+	if [[ "`$to_home_root/$to_user/test_tools/detect_os`" == "ubuntu" ]]; then
 		declare -x PORT_DIR="linux64"
 	fi
 	make_flags="-DMULTITHREAD=${2} -DUSE_PTHREAD -pthread"
