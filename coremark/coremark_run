@@ -71,9 +71,6 @@ show_usage=0
 cpu_add=0
 powers_2=0
 
-# Gather hardware information
-${curdir}/test_tools/gather_data ${curdir}
-ls ${curdir}
 
 usage()
 {
@@ -310,6 +307,10 @@ install_test_tools "$@"
 #
 
 source test_tools/general_setup "$@"
+
+# Gather hardware information
+${curdir}/test_tools/gather_data ${curdir}
+ls ${curdir}
 
 ARGUMENT_LIST=(
 	"commit"
