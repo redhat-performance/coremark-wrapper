@@ -71,7 +71,6 @@ show_usage=0
 cpu_add=0
 powers_2=0
 
-
 usage()
 {
 	echo "Usage $1:"
@@ -112,8 +111,8 @@ install_test_tools()
 	# Check to see if the test tools directory exists.  If it does, we do not need to
 	# clone the repo.
 	#
-	if [ ! -d "test_tools" ]; then
-		git clone $tools_git test_tools
+	if [ ! -d "$curdir/test_tools" ]; then
+		git clone $tools_git $curdir/test_tools
 		if [ $? -ne 0 ]; then
 			exit_out "pulling git $tools_git failed." 1
 		fi
@@ -130,7 +129,7 @@ execute_coremark()
 	#
 	# Ubuntu breaking without this setting.
 	#
-	if [[ "`$to_home_root/$to_user/test_tools/detect_os`" == "ubuntu" ]]; then
+	if [[ "`$curdir/test_tools/detect_os`" == "ubuntu" ]]; then
 		declare -x PORT_DIR="linux64"
 	fi
 	make_flags="-DMULTITHREAD=${2} -DUSE_PTHREAD -pthread"
@@ -275,7 +274,6 @@ generate_results()
 		mv  ${test_name}_*.out ${RESULTSDIR}
 		mv /tmp/${test_name}.out ${RESULTSDIR}
 		cp ${curdir}/meta_data*.yml ${RESULTSDIR}
-		$run_dir/test_tools/move_data $curdir ${RESULTSDIR}
 		tar hcf results_${test_name}_${to_tuned_setting}.tar results_${test_name}_${to_tuned_setting}
 		rm -f results_pbench.tar
 		find -L results_${test_name}_${to_tuned_setting} -type f | tar --transform 's/.*\///g' -cf results_pbench.tar --files-from=/dev/stdin
@@ -306,10 +304,7 @@ install_test_tools "$@"
 # to_tuned_setting: tuned setting
 #
 
-source test_tools/general_setup "$@"
-
-# Gather hardware information
-$run_dir/test_tools/gather_data ${curdir}
+source $curdir/test_tools/general_setup "$@"
 
 ARGUMENT_LIST=(
 	"commit"
@@ -376,7 +371,7 @@ fi
 if [ ! -d "coremark" ]; then
 	if [[ $commit == "none" ]]; then
 		GIT_TERMINAL_PROMPT=0 git clone --depth 1 --branch ${coremark_version} https://github.com/eembc/coremark
-		if [ $? -ne 0 ]; then
+		if [ $? - ne 0 ]; then
 			exit_out "Failed: git clone --depth 1 --branch ${coremark_version} https://github.com/eembc/coremark" 1
 		fi
 	else
