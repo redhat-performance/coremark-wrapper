@@ -77,7 +77,7 @@ usage()
 	echo "  --commit <n>: git commit to use, default is the tag ${coremark_version}"
 	echo "  --cpu_add <n>: starting at cpu count of 1, add this number of cpus to each run"
 	echo "  --powers_2s: starting at 1, run the number of cpus by powers of 2's"
-	source test_tools/general_setup --usage
+	source $curdir/test_tools/general_setup --usage
 	exit 0
 }
 
@@ -250,36 +250,13 @@ generate_results()
 	fi
 
 	if [ $to_pbench -eq 0 ]; then
-		rm -rf /tmp/results_${test_name}_*
-		RESULTSDIR=/tmp/results_${test_name}_${to_tuned_setting}_$(date "+%Y.%m.%d-%H.%M.%S")
-		mkdir ${RESULTSDIR}
-
-		cp results.csv $RESULTSDIR
 		lines=`wc -l results.csv | cut -d' ' -f1`
 		if [ $lines -lt 2 ]; then
-			echo Failed > $RESULTSDIR/test_results_report
+			echo Failed > test_results_report
 		else
-			echo Ran > $RESULTSDIR/test_results_report
+			echo Ran > test_results_report
 		fi
-		cp *_summary $RESULTSDIR
-		cp run*log $RESULTSDIR
-		if [[ $commit == "none" ]]; then
-			echo tag: $coremark_version > $RESULTSDIR/coremark_version
-		else
-			echo commit: ${commit} > $RESULTSDIR/coremark_version
-		fi
-		pushd /tmp > /dev/null
-		ln -s ${RESULTSDIR} results_${test_name}_${to_tuned_setting}
-        	ln -s ${RESULTSDIR} results_pbench_${test_name}_${to_tuned_setting}
-		mv  ${test_name}_*.out ${RESULTSDIR}
-		mv /tmp/${test_name}.out ${RESULTSDIR}
-		cp ${curdir}/meta_data*.yml ${RESULTSDIR}
-		$curdir/test_tools/move_data $curdir ${RESULTSDIR}
-		tar hcf results_${test_name}_${to_tuned_setting}.tar results_${test_name}_${to_tuned_setting}
-		rm -f results_pbench.tar
-		find -L results_${test_name}_${to_tuned_setting} -type f | tar --transform 's/.*\///g' -cf results_pbench.tar --files-from=/dev/stdin
-		tar hcf results_pbench_${test_name}_${to_tuned_setting}.tar results_${test_name}_${to_tuned_setting}
-		popd > /dev/null
+		${curdir}/test_tools/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report" --results results.csv --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
 	fi
 	popd > /dev/null
 	rm $csv_file
