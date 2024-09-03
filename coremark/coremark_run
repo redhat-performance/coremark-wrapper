@@ -184,8 +184,12 @@ run_coremark()
 		test_iters=`grep "Iterations/" $i | cut -d':' -f2 | sed "s/ //g"`
 		echo ${iteration}:${threads}:${test_iters} >> $csv_file
 	done
-	echo "iteration:threads:test passes" > results.csv
+	rm -f results.csv
+	$TOOLS_BIN/test_header_info --front_matter --results_file results.csv --host $to_configuration --sys_type $to_sys_type --tuned $to_tuned_setting --results_version $coremark_version --test_name $test_name
+
+	echo "iteration:threads:test passes" >> results.csv
 	sort -n $csv_file >> results.csv
+	rm $csv_file
 }
 
 produce_report()
@@ -259,7 +263,6 @@ generate_results()
 		${curdir}/test_tools/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report" --results results.csv --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
 	fi
 	popd > /dev/null
-	rm $csv_file
 }
 
 
