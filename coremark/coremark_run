@@ -149,6 +149,12 @@ run_coremark()
 	#
 	# Iteration of test.
 	#
+	#
+	# Issue with package_tool not using tool_bin
+	#
+	pushd $curdir > /dev/null
+	source $TOOLS_BIN/pcp_start
+	popd > /dev/null
 	for iter in $(seq 1 1 $to_times_to_run); do
 		if [ $powers_2 -eq 1 ]; then
 			cpu_count=1
@@ -173,6 +179,7 @@ run_coremark()
 		#
 		execute_coremark $iter $numb_cpus
 	done
+	source $TOOLS_BIN/pcp_stop
 
 	#
 	# Create the csv file.
@@ -260,7 +267,7 @@ generate_results()
 		else
 			echo Ran > test_results_report
 		fi
-		${curdir}/test_tools/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report" --results results.csv --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
+		${TOOLS_BIN}/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report" --results results.csv --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user $to_pcp_args
 	fi
 	popd > /dev/null
 }
@@ -285,9 +292,11 @@ install_test_tools "$@"
 # to_tuned_setting: tuned setting
 #
 
+pushd $curdir > /dev/null
 source $curdir/test_tools/general_setup "$@"
 # Gather hardware information
-$curdir/test_tools/gather_data ${curdir}
+$TOOLS_BIN/gather_data ${curdir}
+popd > /dev/null
 
 ARGUMENT_LIST=(
 	"commit"
