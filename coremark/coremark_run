@@ -184,7 +184,6 @@ run_coremark()
 		test_iters=`grep "Iterations/" $i | cut -d':' -f2 | sed "s/ //g"`
 		echo ${iteration}:${threads}:${test_iters} >> $csv_file
 	done
-	rm -f results.csv
 	$TOOLS_BIN/test_header_info --front_matter --results_file results.csv --host $to_configuration --sys_type $to_sys_type --tuned $to_tuned_setting --results_version $coremark_version --test_name $test_name
 
 	echo "iteration:threads:test passes" >> results.csv
@@ -244,7 +243,6 @@ produce_report()
 
 generate_results()
 {
-	rm run1_summary run2_summary
 	if [ $powers_2 -eq 0 ] && [ $cpu_add -eq 0 ]; then
 		produce_report run1
 		produce_report run2
@@ -323,7 +321,7 @@ while [[ $# -gt 0 ]]; do
 			shift 2
 		;;
 		--powers_2)
-			pbench_arg_list="${pbench_arg_list} $1 $2"
+			pbench_arg_list="${pbench_arg_list} $1"
 			powers_2=1
 			shift 1
 		;;
@@ -351,7 +349,17 @@ if [ -d /${to_home_root}/${to_user} ]; then
 	cd /${to_home_root}/${to_user}
 fi
 
-if [ ! -d "coremark" ]; then
+if [ -d "coremark" ]; then
+	cd coremark
+	if [[ -f results.csv ]]; then
+		time_stamp=`date "+%Y.%m.%d-%H.%M.%S"`
+		arch_dir="archive_${time_stamp}"
+		mkdir -p $arch_dir
+		mv *log  $arch_dir
+		mv results.csv test_results_report  $arch_dir
+	fi
+	cd ..
+else
 	if [[ $commit == "none" ]]; then
 		GIT_TERMINAL_PROMPT=0 git clone --depth 1 --branch ${coremark_version} https://github.com/eembc/coremark
 		if [ $? -ne 0 ]; then
@@ -368,11 +376,10 @@ if [ ! -d "coremark" ]; then
 			exit_out "Failed: git checkout ${commit}" 1
 		fi
 		popd > /dev/null
-
 	fi
 fi
 
-numb_cpus=`cat /proc/cpuinfo | grep processor | wc -l`
+numb_cpus=`nproc`
 pushd coremark > /dev/null
 
 if [ $to_pbench -eq 1 ]; then
