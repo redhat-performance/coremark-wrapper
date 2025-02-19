@@ -283,7 +283,9 @@ install_test_tools "$@"
 # to_tuned_setting: tuned setting
 #
 
+pushd $curdir 2> /dev/null
 source $curdir/test_tools/general_setup "$@"
+popd 2> /dev/null
 # Gather hardware information
 $curdir/test_tools/gather_data ${curdir}
 

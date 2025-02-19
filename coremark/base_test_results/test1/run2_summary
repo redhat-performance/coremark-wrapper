@@ -1,0 +1,319 @@
+2K validation run parameters for coremark.
+CoreMark Size : 666
+Total ticks      : 20191
+Total time (secs): 20.156000
+Iterations/Sec : 59535.622147
+Iterations : 1200000
+Compiler version : GCC11.5.0 20240719 (Red Hat 11.5.0-5)
+Compiler flags : -O2 -DMULTITHREAD=4 -DUSE_PTHREAD -pthread -DPERFORMANCE_RUN=1 -lrt
+Parallel PThreads : 4
+Memory location : Please put data memory location here
+(e.g. code in flash, data on heap etc)
+seedcrc : 0x18f2
+[0]crclist : 0xe3c1
+[1]crclist : 0xe3c1
+[2]crclist : 0xe3c1
+[3]crclist : 0xe3c1
+[0]crcmatrix : 0x0747
+[1]crcmatrix : 0x0747
+[2]crcmatrix : 0x0747
+[3]crcmatrix : 0x0747
+[0]crcstate : 0x8d84
+[1]crcstate : 0x8d84
+[2]crcstate : 0x8d84
+[3]crcstate : 0x8d84
+[0]crcfinal : 0x9ea7
+[1]crcfinal : 0x9ea7
+[2]crcfinal : 0x9ea7
+[3]crcfinal : 0x9ea7
+Correct operation validated. See readme.txt for run and reporting rules.
+2K validation run parameters for coremark.
+CoreMark Size : 666
+Total ticks      : 20037
+Total time (secs): 19.884000
+Iterations/Sec : 60350.030175
+Iterations : 1200000
+Compiler version : GCC11.5.0 20240719 (Red Hat 11.5.0-5)
+Compiler flags : -O2 -DMULTITHREAD=4 -DUSE_PTHREAD -pthread -DPERFORMANCE_RUN=1 -lrt
+Parallel PThreads : 4
+Memory location : Please put data memory location here
+(e.g. code in flash, data on heap etc)
+seedcrc : 0x18f2
+[0]crclist : 0xe3c1
+[1]crclist : 0xe3c1
+[2]crclist : 0xe3c1
+[3]crclist : 0xe3c1
+[0]crcmatrix : 0x0747
+[1]crcmatrix : 0x0747
+[2]crcmatrix : 0x0747
+[3]crcmatrix : 0x0747
+[0]crcstate : 0x8d84
+[1]crcstate : 0x8d84
+[2]crcstate : 0x8d84
+[3]crcstate : 0x8d84
+[0]crcfinal : 0x9ea7
+[1]crcfinal : 0x9ea7
+[2]crcfinal : 0x9ea7
+[3]crcfinal : 0x9ea7
+Correct operation validated. See readme.txt for run and reporting rules.
+2K validation run parameters for coremark.
+CoreMark Size : 666
+Total ticks      : 30212
+Total time (secs): 20.196000
+Iterations/Sec : 59417.706477
+Iterations : 1200000
+Compiler version : GCC11.5.0 20240719 (Red Hat 11.5.0-5)
+Compiler flags : -O2 -DMULTITHREAD=4 -DUSE_PTHREAD -pthread -DPERFORMANCE_RUN=1 -lrt
+Parallel PThreads : 4
+Memory location : Please put data memory location here
+(e.g. code in flash, data on heap etc)
+seedcrc : 0x18f2
+[0]crclist : 0xe3c1
+[1]crclist : 0xe3c1
+[2]crclist : 0xe3c1
+[3]crclist : 0xe3c1
+[0]crcmatrix : 0x0747
+[1]crcmatrix : 0x0747
+[2]crcmatrix : 0x0747
+[3]crcmatrix : 0x0747
+[0]crcstate : 0x8d84
+[1]crcstate : 0x8d84
+[2]crcstate : 0x8d84
+[3]crcstate : 0x8d84
+[0]crcfinal : 0x9ea7
+[1]crcfinal : 0x9ea7
+[2]crcfinal : 0x9ea7
+[3]crcfinal : 0x9ea7
+Correct operation validated. See readme.txt for run and reporting rules.
+2K validation run parameters for coremark.
+CoreMark Size : 666
+Total ticks      : 45336
+Total time (secs): 20.233000
+Iterations/Sec : 59309.049572
+Iterations : 1200000
+Compiler version : GCC11.5.0 20240719 (Red Hat 11.5.0-5)
+Compiler flags : -O2 -DMULTITHREAD=4 -DUSE_PTHREAD -pthread -DPERFORMANCE_RUN=1 -lrt
+Parallel PThreads : 4
+Memory location : Please put data memory location here
+(e.g. code in flash, data on heap etc)
+seedcrc : 0x18f2
+[0]crclist : 0xe3c1
+[1]crclist : 0xe3c1
+[2]crclist : 0xe3c1
+[3]crclist : 0xe3c1
+[0]crcmatrix : 0x0747
+[1]crcmatrix : 0x0747
+[2]crcmatrix : 0x0747
+[3]crcmatrix : 0x0747
+[0]crcstate : 0x8d84
+[1]crcstate : 0x8d84
+[2]crcstate : 0x8d84
+[3]crcstate : 0x8d84
+[0]crcfinal : 0x9ea7
+[1]crcfinal : 0x9ea7
+[2]crcfinal : 0x9ea7
+[3]crcfinal : 0x9ea7
+Correct operation validated. See readme.txt for run and reporting rules.
+2K validation run parameters for coremark.
+CoreMark Size : 666
+Total ticks      : 36133
+Total time (secs): 20.122000
+Iterations/Sec : 59636.219064
+Iterations : 1200000
+Compiler version : GCC11.5.0 20240719 (Red Hat 11.5.0-5)
+Compiler flags : -O2 -DMULTITHREAD=4 -DUSE_PTHREAD -pthread -DPERFORMANCE_RUN=1 -lrt
+Parallel PThreads : 4
+Memory location : Please put data memory location here
+(e.g. code in flash, data on heap etc)
+seedcrc : 0x18f2
+[0]crclist : 0xe3c1
+[1]crclist : 0xe3c1
+[2]crclist : 0xe3c1
+[3]crclist : 0xe3c1
+[0]crcmatrix : 0x0747
+[1]crcmatrix : 0x0747
+[2]crcmatrix : 0x0747
+[3]crcmatrix : 0x0747
+[0]crcstate : 0x8d84
+[1]crcstate : 0x8d84
+[2]crcstate : 0x8d84
+[3]crcstate : 0x8d84
+[0]crcfinal : 0x9ea7
+[1]crcfinal : 0x9ea7
+[2]crcfinal : 0x9ea7
+[3]crcfinal : 0x9ea7
+Correct operation validated. See readme.txt for run and reporting rules.
+2K validation run parameters for coremark.
+CoreMark Size : 666
+Total ticks      : 42114
+Total time (secs): 20.090000
+Iterations/Sec : 59731.209557
+Iterations : 1200000
+Compiler version : GCC11.5.0 20240719 (Red Hat 11.5.0-5)
+Compiler flags : -O2 -DMULTITHREAD=4 -DUSE_PTHREAD -pthread -DPERFORMANCE_RUN=1 -lrt
+Parallel PThreads : 4
+Memory location : Please put data memory location here
+(e.g. code in flash, data on heap etc)
+seedcrc : 0x18f2
+[0]crclist : 0xe3c1
+[1]crclist : 0xe3c1
+[2]crclist : 0xe3c1
+[3]crclist : 0xe3c1
+[0]crcmatrix : 0x0747
+[1]crcmatrix : 0x0747
+[2]crcmatrix : 0x0747
+[3]crcmatrix : 0x0747
+[0]crcstate : 0x8d84
+[1]crcstate : 0x8d84
+[2]crcstate : 0x8d84
+[3]crcstate : 0x8d84
+[0]crcfinal : 0x9ea7
+[1]crcfinal : 0x9ea7
+[2]crcfinal : 0x9ea7
+[3]crcfinal : 0x9ea7
+Correct operation validated. See readme.txt for run and reporting rules.
+2K validation run parameters for coremark.
+CoreMark Size : 666
+Total ticks      : 49124
+Total time (secs): 20.137000
+Iterations/Sec : 59591.796196
+Iterations : 1200000
+Compiler version : GCC11.5.0 20240719 (Red Hat 11.5.0-5)
+Compiler flags : -O2 -DMULTITHREAD=4 -DUSE_PTHREAD -pthread -DPERFORMANCE_RUN=1 -lrt
+Parallel PThreads : 4
+Memory location : Please put data memory location here
+(e.g. code in flash, data on heap etc)
+seedcrc : 0x18f2
+[0]crclist : 0xe3c1
+[1]crclist : 0xe3c1
+[2]crclist : 0xe3c1
+[3]crclist : 0xe3c1
+[0]crcmatrix : 0x0747
+[1]crcmatrix : 0x0747
+[2]crcmatrix : 0x0747
+[3]crcmatrix : 0x0747
+[0]crcstate : 0x8d84
+[1]crcstate : 0x8d84
+[2]crcstate : 0x8d84
+[3]crcstate : 0x8d84
+[0]crcfinal : 0x9ea7
+[1]crcfinal : 0x9ea7
+[2]crcfinal : 0x9ea7
+[3]crcfinal : 0x9ea7
+Correct operation validated. See readme.txt for run and reporting rules.
+2K validation run parameters for coremark.
+CoreMark Size : 666
+Total ticks      : 57328
+Total time (secs): 20.125000
+Iterations/Sec : 59627.329193
+Iterations : 1200000
+Compiler version : GCC11.5.0 20240719 (Red Hat 11.5.0-5)
+Compiler flags : -O2 -DMULTITHREAD=4 -DUSE_PTHREAD -pthread -DPERFORMANCE_RUN=1 -lrt
+Parallel PThreads : 4
+Memory location : Please put data memory location here
+(e.g. code in flash, data on heap etc)
+seedcrc : 0x18f2
+[0]crclist : 0xe3c1
+[1]crclist : 0xe3c1
+[2]crclist : 0xe3c1
+[3]crclist : 0xe3c1
+[0]crcmatrix : 0x0747
+[1]crcmatrix : 0x0747
+[2]crcmatrix : 0x0747
+[3]crcmatrix : 0x0747
+[0]crcstate : 0x8d84
+[1]crcstate : 0x8d84
+[2]crcstate : 0x8d84
+[3]crcstate : 0x8d84
+[0]crcfinal : 0x9ea7
+[1]crcfinal : 0x9ea7
+[2]crcfinal : 0x9ea7
+[3]crcfinal : 0x9ea7
+Correct operation validated. See readme.txt for run and reporting rules.
+2K validation run parameters for coremark.
+CoreMark Size : 666
+Total ticks      : 66850
+Total time (secs): 20.115000
+Iterations/Sec : 59656.972409
+Iterations : 1200000
+Compiler version : GCC11.5.0 20240719 (Red Hat 11.5.0-5)
+Compiler flags : -O2 -DMULTITHREAD=4 -DUSE_PTHREAD -pthread -DPERFORMANCE_RUN=1 -lrt
+Parallel PThreads : 4
+Memory location : Please put data memory location here
+(e.g. code in flash, data on heap etc)
+seedcrc : 0x18f2
+[0]crclist : 0xe3c1
+[1]crclist : 0xe3c1
+[2]crclist : 0xe3c1
+[3]crclist : 0xe3c1
+[0]crcmatrix : 0x0747
+[1]crcmatrix : 0x0747
+[2]crcmatrix : 0x0747
+[3]crcmatrix : 0x0747
+[0]crcstate : 0x8d84
+[1]crcstate : 0x8d84
+[2]crcstate : 0x8d84
+[3]crcstate : 0x8d84
+[0]crcfinal : 0x9ea7
+[1]crcfinal : 0x9ea7
+[2]crcfinal : 0x9ea7
+[3]crcfinal : 0x9ea7
+Correct operation validated. See readme.txt for run and reporting rules.
+2K validation run parameters for coremark.
+CoreMark Size : 666
+Total ticks      : 78005
+Total time (secs): 20.106000
+Iterations/Sec : 59683.676514
+Iterations : 1200000
+Compiler version : GCC11.5.0 20240719 (Red Hat 11.5.0-5)
+Compiler flags : -O2 -DMULTITHREAD=4 -DUSE_PTHREAD -pthread -DPERFORMANCE_RUN=1 -lrt
+Parallel PThreads : 4
+Memory location : Please put data memory location here
+(e.g. code in flash, data on heap etc)
+seedcrc : 0x18f2
+[0]crclist : 0xe3c1
+[1]crclist : 0xe3c1
+[2]crclist : 0xe3c1
+[3]crclist : 0xe3c1
+[0]crcmatrix : 0x0747
+[1]crcmatrix : 0x0747
+[2]crcmatrix : 0x0747
+[3]crcmatrix : 0x0747
+[0]crcstate : 0x8d84
+[1]crcstate : 0x8d84
+[2]crcstate : 0x8d84
+[3]crcstate : 0x8d84
+[0]crcfinal : 0x9ea7
+[1]crcfinal : 0x9ea7
+[2]crcfinal : 0x9ea7
+[3]crcfinal : 0x9ea7
+Correct operation validated. See readme.txt for run and reporting rules.
+2K validation run parameters for coremark.
+CoreMark Size : 666
+Total ticks      : 232768
+Total time (secs): 20.206000
+Iterations/Sec : 59388.300505
+Iterations : 1200000
+Compiler version : GCC11.5.0 20240719 (Red Hat 11.5.0-5)
+Compiler flags : -O2 -DMULTITHREAD=4 -DUSE_PTHREAD -pthread -DPERFORMANCE_RUN=1 -lrt
+Parallel PThreads : 4
+Memory location : Please put data memory location here
+(e.g. code in flash, data on heap etc)
+seedcrc : 0x18f2
+[0]crclist : 0xe3c1
+[1]crclist : 0xe3c1
+[2]crclist : 0xe3c1
+[3]crclist : 0xe3c1
+[0]crcmatrix : 0x0747
+[1]crcmatrix : 0x0747
+[2]crcmatrix : 0x0747
+[3]crcmatrix : 0x0747
+[0]crcstate : 0x8d84
+[1]crcstate : 0x8d84
+[2]crcstate : 0x8d84
+[3]crcstate : 0x8d84
+[0]crcfinal : 0x9ea7
+[1]crcfinal : 0x9ea7
+[2]crcfinal : 0x9ea7
+[3]crcfinal : 0x9ea7
+Correct operation validated. See readme.txt for run and reporting rules.

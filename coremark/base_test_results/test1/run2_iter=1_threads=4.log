@@ -1,0 +1,29 @@
+2K validation run parameters for coremark.
+CoreMark Size    : 666
+Total ticks      : 20206
+Total time (secs): 20.206000
+Iterations/Sec   : 59388.300505
+Iterations       : 1200000
+Compiler version : GCC11.5.0 20240719 (Red Hat 11.5.0-5)
+Compiler flags   : -O2 -DMULTITHREAD=4 -DUSE_PTHREAD -pthread -DPERFORMANCE_RUN=1  -lrt
+Parallel PThreads : 4
+Memory location  : Please put data memory location here
+			(e.g. code in flash, data on heap etc)
+seedcrc          : 0x18f2
+[0]crclist       : 0xe3c1
+[1]crclist       : 0xe3c1
+[2]crclist       : 0xe3c1
+[3]crclist       : 0xe3c1
+[0]crcmatrix     : 0x0747
+[1]crcmatrix     : 0x0747
+[2]crcmatrix     : 0x0747
+[3]crcmatrix     : 0x0747
+[0]crcstate      : 0x8d84
+[1]crcstate      : 0x8d84
+[2]crcstate      : 0x8d84
+[3]crcstate      : 0x8d84
+[0]crcfinal      : 0x9ea7
+[1]crcfinal      : 0x9ea7
+[2]crcfinal      : 0x9ea7
+[3]crcfinal      : 0x9ea7
+Correct operation validated. See readme.txt for run and reporting rules.

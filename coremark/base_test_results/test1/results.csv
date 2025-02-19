@@ -1,0 +1,15 @@
+# Test general meta start
+# Test: coremark
+# Results version: v1.01
+# Host: m5.xlarge
+# Sys environ: aws
+# Tuned: virtual-guest
+# OS: 5.14.0-503.11.1.el9_5.x86_64
+# Numa nodes: 1
+# CPU family: Intel(R) Xeon(R) Platinum 8259CL CPU @ 2.50GHz
+# Number cpus: 4
+# Memory: 15903220kB
+# Test general meta end
+iteration:threads:test passes
+1:4:58656.760192
+1:4:59388.300505

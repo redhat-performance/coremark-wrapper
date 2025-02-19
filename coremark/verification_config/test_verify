@@ -1,0 +1,5 @@
+Required_Systems: intel,amd,arm
+Via_Zathras: No
+fields: iteration:n,threads:n,test passes:n
+test:--iterations 1:base_test_results/test1
+
