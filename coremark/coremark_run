@@ -26,6 +26,7 @@ pbench_arg_list=""
 commit="none"
 coremark_version="v1.01"
 test_name="coremark"
+results_file="results_${test_name}.csv"
 arguments="$@"
 
 exit_out()
@@ -184,10 +185,10 @@ run_coremark()
 		test_iters=`grep "Iterations/" $i | cut -d':' -f2 | sed "s/ //g"`
 		echo ${iteration}:${threads}:${test_iters} >> $csv_file
 	done
-	$TOOLS_BIN/test_header_info --front_matter --results_file results.csv --host $to_configuration --sys_type $to_sys_type --tuned $to_tuned_setting --results_version $coremark_version --test_name $test_name
+	$TOOLS_BIN/test_header_info --front_matter --results_file $results_file --host $to_configuration --sys_type $to_sys_type --tuned $to_tuned_setting --results_version $coremark_version --test_name $test_name
 
-	echo "iteration:threads:test passes" >> results.csv
-	sort -n $csv_file >> results.csv
+	echo "iteration:threads:test passes" >> $results_file
+	sort -n $csv_file >> $results_file
 	rm $csv_file
 }
 
@@ -252,13 +253,13 @@ generate_results()
 	fi
 
 	if [ $to_pbench -eq 0 ]; then
-		lines=`wc -l results.csv | cut -d' ' -f1`
+		lines=`wc -l $results_file | cut -d' ' -f1`
 		if [ $lines -lt 2 ]; then
 			echo Failed > test_results_report
 		else
 			echo Ran > test_results_report
 		fi
-		${curdir}/test_tools/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report" --results results.csv --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
+		${curdir}/test_tools/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report" --results $results_file --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
 	fi
 	popd > /dev/null
 }
@@ -353,12 +354,12 @@ fi
 
 if [ -d "coremark" ]; then
 	cd coremark
-	if [[ -f results.csv ]]; then
+	if [[ -f $results_file ]]; then
 		time_stamp=`date "+%Y.%m.%d-%H.%M.%S"`
 		arch_dir="archive_${time_stamp}"
 		mkdir -p $arch_dir
 		mv *log  $arch_dir
-		mv results.csv test_results_report  $arch_dir
+		mv $results_file test_results_report  $arch_dir
 	fi
 	cd ..
 else
