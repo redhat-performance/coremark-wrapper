@@ -41,7 +41,7 @@ if [ ! -f "/tmp/${test_name}.out" ]; then
 	rtc=$?
 	cat /tmp/${test_name}.out
 	rm /tmp/${test_name}.out
-	exit $?
+	exit $rtc
 fi
 
 curdir=`pwd`
@@ -247,8 +247,8 @@ generate_results()
 		produce_report run1
 		produce_report run2
 	else
-		echo Summnary not supported yet when doing cpu counts > run1_summary
-		echo Summnary not supported yet when doing cpu counts > run2_summary
+		echo Summary not supported yet when doing cpu counts > run1_summary
+		echo Summary not supported yet when doing cpu counts > run2_summary
 	fi
 
 	if [ $to_pbench -eq 0 ]; then
@@ -283,7 +283,9 @@ install_test_tools "$@"
 # to_tuned_setting: tuned setting
 #
 
+pushd $curdir 2> /dev/null
 source $curdir/test_tools/general_setup "$@"
+popd 2> /dev/null
 # Gather hardware information
 $curdir/test_tools/gather_data ${curdir}
 
