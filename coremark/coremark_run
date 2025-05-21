@@ -134,11 +134,23 @@ execute_coremark()
 		declare -x PORT_DIR="linux64"
 	fi
 	make_flags="-DMULTITHREAD=${2} -DUSE_PTHREAD -pthread"
+
+if [ $to_use_pcp -eq 1 ]; then
+ 	echo "Start pcp"
+ 	start_pcp ${curdir}/pcp/iter_${1}_threads_${2} ${test_name} $pcp_cfg
+fi
+
 	make -s XCFLAGS="${make_flags}"
 	if [ $? -ne 0 ]; then
 		exit_out "Failed: make XCFLAGS=\"${make_flags}\"" 1
 	fi
-	#
+
+if [ $to_use_pcp -eq 1 ]; then
+ 	echo "Stop pcp"
+        stop_pcp
+fi
+
+#
 	# Move results
 	#
 	mv run1.log run1_iter=${1}_threads=${2}.log
@@ -259,7 +271,7 @@ generate_results()
 		else
 			echo Ran > test_results_report
 		fi
-		${curdir}/test_tools/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report" --results $results_file --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
+		${curdir}/test_tools/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report,${curdir}/pcp" --results $results_file --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
 	fi
 	popd > /dev/null
 }
@@ -384,6 +396,12 @@ fi
 
 numb_cpus=`nproc`
 pushd coremark > /dev/null
+
+if [ $to_use_pcp -eq 1 ]; then 
+        source $TOOLS_BIN/pcp/pcp_commands.inc
+        setup_pcp
+        pcp_cfg=$TOOLS_BIN/pcp/default.cfg 
+fi
 
 if [ $to_pbench -eq 1 ]; then
         source ~/.bashrc
