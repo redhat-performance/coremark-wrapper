@@ -1,3 +1,5 @@
+%_header
 iteration:threads:test\spasses
-1:[[:digit:]]{1,}:[1-9][0-9.]{1,}$
-1:[[:digit:]]{1,}:[1-9][0-9.]{1,}$
+%_passes
+%_iteration:[[:digit:]]{1,}:[1-9][0-9.]{1,}$
+%_iteration:[[:digit:]]{1,}:[1-9][0-9.]{1,}$
