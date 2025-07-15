@@ -28,6 +28,7 @@ coremark_version="v1.01"
 test_name="coremark"
 results_file="results_${test_name}.csv"
 arguments="$@"
+rtc=0
 
 exit_out()
 {
@@ -254,11 +255,7 @@ generate_results()
 
 	if [ $to_pbench -eq 0 ]; then
 		$TOOLS_BIN/validate_line --results_file $results_file --base_results_file $run_dir/base_test_results/test1/verify
-		if [ $? -ne 0 ]; then
-			echo Failed > test_results_report
-		else
-			echo Ran > test_results_report
-		fi
+		rtc=$?
 		${curdir}/test_tools/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report" --results $results_file --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
 	fi
 	popd > /dev/null
@@ -401,5 +398,5 @@ else
 	run_coremark
 	generate_results
 fi
-exit 0
+exit $rtc
 
