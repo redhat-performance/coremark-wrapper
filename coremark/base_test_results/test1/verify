@@ -1,21 +1,17 @@
 #
-# Main reg exp summary
+#  regexp explanation
+#  iteration:threads:test\spasses
+#  %_iteration:[1-9][0-9]{0,}:[1-9][0-9.]{1,}$
 #
-#   Field 1: One or more digits,
-#   Field 2: a non-zero field
-#
-# Detailed description
-#   [[:digit:]]{1,}
-#     [[:digit:]]: This is a character class that matches any decimal digit (0-9).
-#     {1,}: This is a quantifier that means "one or more" occurrences of the preceding element. So, [[:digit:]]{1,} matches one or more digits.
-#   [1-9][0-9.]{1,}$
-#     [1-9]: This matches a single digit from 1 to 9 (i.e., any non-zero digit).
-#     [0-9.]: This is a character set that matches either a digit (0-9) or a literal dot (.).
-#     {1,}: Again, this quantifier means "one or more" occurrences of the preceding element.
-#     $: This is an anchor that matches the end of the line.
+#  %_iteration: diretive to the validate_line script, saying convert the field to a number that
+#               incrmenets by 1 each time.  That number will replace %_iteration in the regexp.
+#   Field 1: (iterations) [1-9][0-9]{0,}:  The iteration number of the test. Will match the results file.
+#   Field 2: (threads) [1-9][0-9]{0,}: The number of threads executed: Positive non-zero value.
+#   Field 3: (test passes) [1-9][0-9.]{1,}$: The number of passes we made with the test.
+#            Positive non-zero value.
 #
 %_header
 iteration:threads:test\spasses
 %_passes
-%_iteration:[[:digit:]]{1,}:[1-9][0-9.]{1,}$
-%_iteration:[[:digit:]]{1,}:[1-9][0-9.]{1,}$
+%_iteration:[1-9][0-9]{0,}:[1-9][0-9.]{1,}$
+%_iteration:[1-9][0-9]{0,}:[1-9][0-9.]{1,}$
