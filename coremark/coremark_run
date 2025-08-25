@@ -252,15 +252,13 @@ generate_results()
 		echo Summary not supported yet when doing cpu counts > run2_summary
 	fi
 
-	if [ $to_pbench -eq 0 ]; then
-		lines=`wc -l $results_file | cut -d' ' -f1`
-		if [ $lines -lt 2 ]; then
-			echo Failed > test_results_report
-		else
-			echo Ran > test_results_report
-		fi
-		${curdir}/test_tools/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report" --results $results_file --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
+	lines=`wc -l $results_file | cut -d' ' -f1`
+	if [ $lines -lt 2 ]; then
+		echo Failed > test_results_report
+	else
+		echo Ran > test_results_report
 	fi
+	${curdir}/test_tools/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report" --results $results_file --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
 	popd > /dev/null
 }
 
@@ -385,21 +383,8 @@ fi
 numb_cpus=`nproc`
 pushd coremark > /dev/null
 
-if [ $to_pbench -eq 1 ]; then
-        source ~/.bashrc
-	cd $curdir
-	#
-	# Arguments to pbecnh, change as required.
-	#
-	pbench_args="--cmd_executing \"$0\" $arguments --test ${test_name} --spacing 11 --pbench_stats $to_pstats"
-        echo $TOOLS_BIN/execute_via_pbench ${pbench_args}
-        $TOOLS_BIN/execute_via_pbench ${pbench_args}
-	if  [ $? -ne 0 ]; then
-		exit_out "Error: $TOOLS_BIN/execute_via_pbench ${pbench_args}" 1
-	fi
-else
-	run_coremark
-	generate_results
-fi
+run_coremark
+generate_results
+
 exit 0
 
