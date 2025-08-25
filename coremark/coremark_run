@@ -22,7 +22,6 @@
 # set of default run parameters based on the system configuration.
 #
 
-pbench_arg_list=""
 commit="none"
 coremark_version="v1.01"
 test_name="coremark"
@@ -312,17 +311,14 @@ eval set --$opts
 while [[ $# -gt 0 ]]; do
 	case "$1" in
 		--commit)
-			pbench_arg_list="${pbench_arg_list} $1 $2"
 			commit=$2
 			shift 2
 		;;
 		--cpu_add)
-			pbench_arg_list="${pbench_arg_list} $1 $2"
 			cpu_add=$2
 			shift 2
 		;;
 		--powers_2)
-			pbench_arg_list="${pbench_arg_list} $1"
 			powers_2=1
 			shift 1
 		;;
