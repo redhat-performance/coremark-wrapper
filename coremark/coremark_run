@@ -28,6 +28,7 @@ coremark_version="v1.01"
 test_name="coremark"
 results_file="results_${test_name}.csv"
 arguments="$@"
+rtc=0
 
 exit_out()
 {
@@ -253,13 +254,10 @@ generate_results()
 	fi
 
 	if [ $to_pbench -eq 0 ]; then
-		lines=`wc -l $results_file | cut -d' ' -f1`
-		if [ $lines -lt 2 ]; then
-			echo Failed > test_results_report
-		else
-			echo Ran > test_results_report
-		fi
-		${curdir}/test_tools/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report" --results $results_file --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
+		$TOOLS_BIN/csv_to_json $to_json_flags --csv_file ${results_file} --output_file ${test_name}.json
+		$TOOLS_BIN/verify_results $to_verify_flags --file ${test_name}.json --schema_file $to_script_dir/result_schema.py --class_name CoremarkResults
+		rtc=$?
+		${TOOLS_BIN}/save_results --curdir $curdir --home_root $to_home_root --other_files "*json,*_summary,run*log,test_results_report" --results $results_file --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
 	fi
 	popd > /dev/null
 }
@@ -401,5 +399,4 @@ else
 	run_coremark
 	generate_results
 fi
-exit 0
-
+exit $rtc
