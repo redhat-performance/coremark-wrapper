@@ -133,10 +133,28 @@ execute_coremark()
 		declare -x PORT_DIR="linux64"
 	fi
 	make_flags="-DMULTITHREAD=${2} -DUSE_PTHREAD -pthread"
+
+	#If we're using PCP, snap a chalk line at the start of the iteration
+	if [[ $to_use_pcp -eq 1 ]]; then
+        	start_pcp_subset
+	fi
+
 	make -s XCFLAGS="${make_flags}"
 	if [ $? -ne 0 ]; then
 		exit_out "Failed: make XCFLAGS=\"${make_flags}\"" 1
 	fi
+
+	# If we're using PCP, snap the chalk line at the end of the iteration
+	# and log the iteration's result
+
+	if [[ $to_use_pcp -eq 1 ]]; then
+        	echo "Send result to PCP archive"
+        	test_iters=`grep "Iterations/" run1.log | cut -d':' -f2 | sed "s/ //g"`
+        	echo ${test_iters}
+        	result2pcp iterations_sec ${test_iters}
+	        stop_pcp_subset
+	fi
+
 	#
 	# Move results
 	#
@@ -146,6 +164,12 @@ execute_coremark()
 
 run_coremark()
 {
+	# If we're using PCP start logging
+	if [[ $to_use_pcp -eq 1 ]]; then
+                echo "Start PCP"
+                start_pcp ${pcpdir}/ ${test_name} $pcp_cfg
+        fi
+
 	#
 	# Iteration of test.
 	#
@@ -173,6 +197,12 @@ run_coremark()
 		#
 		execute_coremark $iter $numb_cpus
 	done
+
+	# If we're using PCP, stop logging
+        if [[ $to_use_pcp -eq 1 ]]; then
+                echo "Stop PCP"
+                stop_pcp
+        fi
 
 	#
 	# Create the csv file.
@@ -257,7 +287,7 @@ generate_results()
 	else
 		echo Ran > test_results_report
 	fi
-	${curdir}/test_tools/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report" --results $results_file --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
+	${curdir}/test_tools/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report,${pcpdir}" --results $results_file --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
 	popd > /dev/null
 }
 
@@ -376,7 +406,22 @@ fi
 numb_cpus=`nproc`
 pushd coremark > /dev/null
 
+# Get PCP setup if we're using it
+if [[ $to_use_pcp -eq 1 ]]; then
+#	rm -rf ${curdir}/pcp	# PCP doesn't seem to like it if there's already an archive in the place I want to put one
+        source $TOOLS_BIN/pcp/pcp_commands.inc
+        setup_pcp
+        pcp_cfg=$TOOLS_BIN/pcp/default.cfg
+	pcpdir=/tmp/pcp_`date "+%Y.%m.%d-%H.%M.%S"`
+fi
+
 run_coremark
+
+# Shutdown PCP and clean up after ourselves
+if [[ $to_use_pcp -eq 1 ]]; then
+        shutdown_pcp
+fi
+
 generate_results
 
 exit 0
