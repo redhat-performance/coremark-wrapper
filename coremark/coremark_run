@@ -22,7 +22,6 @@
 # set of default run parameters based on the system configuration.
 #
 
-pbench_arg_list=""
 commit="none"
 coremark_version="v1.01"
 test_name="coremark"
@@ -134,10 +133,28 @@ execute_coremark()
 		declare -x PORT_DIR="linux64"
 	fi
 	make_flags="-DMULTITHREAD=${2} -DUSE_PTHREAD -pthread"
+
+	#If we're using PCP, snap a chalk line at the start of the iteration
+	if [[ $to_use_pcp -eq 1 ]]; then
+        	start_pcp_subset
+	fi
+
 	make -s XCFLAGS="${make_flags}"
 	if [ $? -ne 0 ]; then
 		exit_out "Failed: make XCFLAGS=\"${make_flags}\"" 1
 	fi
+
+	# If we're using PCP, snap the chalk line at the end of the iteration
+	# and log the iteration's result
+
+	if [[ $to_use_pcp -eq 1 ]]; then
+        	echo "Send result to PCP archive"
+        	test_iters=`grep "Iterations/" run1.log | cut -d':' -f2 | sed "s/ //g"`
+        	echo ${test_iters}
+        	result2pcp iterations_sec ${test_iters}
+	        stop_pcp_subset
+	fi
+
 	#
 	# Move results
 	#
@@ -147,6 +164,12 @@ execute_coremark()
 
 run_coremark()
 {
+	# If we're using PCP start logging
+	if [[ $to_use_pcp -eq 1 ]]; then
+                echo "Start PCP"
+                start_pcp ${pcpdir}/ ${test_name} $pcp_cfg
+        fi
+
 	#
 	# Iteration of test.
 	#
@@ -174,6 +197,12 @@ run_coremark()
 		#
 		execute_coremark $iter $numb_cpus
 	done
+
+	# If we're using PCP, stop logging
+        if [[ $to_use_pcp -eq 1 ]]; then
+                echo "Stop PCP"
+                stop_pcp
+        fi
 
 	#
 	# Create the csv file.
@@ -252,15 +281,13 @@ generate_results()
 		echo Summary not supported yet when doing cpu counts > run2_summary
 	fi
 
-	if [ $to_pbench -eq 0 ]; then
-		lines=`wc -l $results_file | cut -d' ' -f1`
-		if [ $lines -lt 2 ]; then
-			echo Failed > test_results_report
-		else
-			echo Ran > test_results_report
-		fi
-		${curdir}/test_tools/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report" --results $results_file --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
+	lines=`wc -l $results_file | cut -d' ' -f1`
+	if [ $lines -lt 2 ]; then
+		echo Failed > test_results_report
+	else
+		echo Ran > test_results_report
 	fi
+	${curdir}/test_tools/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report,${pcpdir}" --results $results_file --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
 	popd > /dev/null
 }
 
@@ -274,9 +301,6 @@ install_test_tools "$@"
 # to_home_root: home directory
 # to_configuration: configuration information
 # to_times_to_run: number of times to run the test
-# to_pbench: Run the test via pbench
-# to_pbench_copy: Copy the data to the pbench repository, not move_it.
-# to_puser: User running pbench
 # to_run_label: Label for the run
 # to_user: User on the test system running the test
 # to_sys_type: for results info, basically aws, azure or local
@@ -314,17 +338,14 @@ eval set --$opts
 while [[ $# -gt 0 ]]; do
 	case "$1" in
 		--commit)
-			pbench_arg_list="${pbench_arg_list} $1 $2"
 			commit=$2
 			shift 2
 		;;
 		--cpu_add)
-			pbench_arg_list="${pbench_arg_list} $1 $2"
 			cpu_add=$2
 			shift 2
 		;;
 		--powers_2)
-			pbench_arg_list="${pbench_arg_list} $1"
 			powers_2=1
 			shift 1
 		;;
@@ -385,22 +406,24 @@ fi
 numb_cpus=`nproc`
 pushd coremark > /dev/null
 
-if [ $to_pbench -eq 1 ]; then
-        source ~/.bashrc
-	cd $curdir
-	#
-	# Arguments to pbecnh, change as required.
-	#
-	pbench_args="--cmd_executing \"$0\" $arguments --test ${test_name} --spacing 11 --pbench_stats $to_pstats"
-        echo $TOOLS_BIN/execute_via_pbench ${pbench_args}
-        $TOOLS_BIN/execute_via_pbench ${pbench_args}
-	if  [ $? -ne 0 ]; then
-		exit_out "Error: $TOOLS_BIN/execute_via_pbench ${pbench_args}" 1
-	fi
-else
-	$curdir/test_tools/package_tool --wrapper_config $curdir/wrapper.json
-	run_coremark
-	generate_results
+$curdir/test_tools/package_tool --wrapper_config $curdir/wrapper.json
+
+# Get PCP setup if we're using it
+if [[ $to_use_pcp -eq 1 ]]; then
+        source $TOOLS_BIN/pcp/pcp_commands.inc
+        setup_pcp
+        pcp_cfg=$TOOLS_BIN/pcp/default.cfg
+	    pcpdir=/tmp/pcp_`date "+%Y.%m.%d-%H.%M.%S"`
 fi
+
+run_coremark
+
+# Shutdown PCP and clean up after ourselves
+if [[ $to_use_pcp -eq 1 ]]; then
+        shutdown_pcp
+fi
+
+generate_results
+
 exit 0
 
