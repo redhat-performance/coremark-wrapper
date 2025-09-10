@@ -1,0 +1,16 @@
+{
+  "dependencies": {
+    "rhel": [
+      "bc",
+      "numactl",
+      "perf",
+      "unzip",
+      "make",
+      "sed",
+      "gawk",
+      "gcc",
+      "git",
+      "zip"
+    ]
+  }
+}
