@@ -398,6 +398,7 @@ if [ $to_pbench -eq 1 ]; then
 		exit_out "Error: $TOOLS_BIN/execute_via_pbench ${pbench_args}" 1
 	fi
 else
+	$curdir/test_tools/package_tool --wrapper_config $curdir/wrapper.json
 	run_coremark
 	generate_results
 fi
