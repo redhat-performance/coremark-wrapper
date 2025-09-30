@@ -216,7 +216,7 @@ run_coremark()
 	done
 	$TOOLS_BIN/test_header_info --front_matter --results_file $results_file --host $to_configuration --sys_type $to_sys_type --tuned $to_tuned_setting --results_version $coremark_version --test_name $test_name
 
-	echo "iteration:threads:test passes" >> $results_file
+	echo "iteration:threads:IterationsPerSec" >> $results_file
 	sort -n $csv_file >> $results_file
 	rm $csv_file
 }
@@ -243,7 +243,7 @@ produce_report()
 				total_time=`echo ${total_time}+${value} | bc`
 				continue
 			fi
-			if [[ $line == "Iterations/sec"* ]]; then
+			if [[ $line == "IterationsPerSec"* ]]; then
 				value=`echo $line | cut -d':' -f2 | sed "s/ //g"`
 				iterations=`echo ${iterations}+${value} | bc`
 				continue
