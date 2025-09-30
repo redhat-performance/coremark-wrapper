@@ -216,7 +216,7 @@ run_coremark()
 	done
 	$TOOLS_BIN/test_header_info --front_matter --results_file $results_file --host $to_configuration --sys_type $to_sys_type --tuned $to_tuned_setting --results_version $coremark_version --test_name $test_name
 
-	echo "iteration:threads:iters/sec" >> $results_file
+	echo "iteration:threads:IterationsPerSec" >> $results_file
 	sort -n $csv_file >> $results_file
 	rm $csv_file
 }
