@@ -243,7 +243,7 @@ produce_report()
 				total_time=`echo ${total_time}+${value} | bc`
 				continue
 			fi
-			if [[ $line == "Iterations/sec"* ]]; then
+			if [[ $line == "IterationsPerSec"* ]]; then
 				value=`echo $line | cut -d':' -f2 | sed "s/ //g"`
 				iterations=`echo ${iterations}+${value} | bc`
 				continue
