@@ -15,7 +15,6 @@
     "ubuntu": [
       "bc",
       "numactl",
-      "perf",
       "unzip",
       "make",
       "sed",
