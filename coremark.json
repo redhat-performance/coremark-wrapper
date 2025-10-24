@@ -34,6 +34,16 @@
       "gcc",
       "git",
       "zip"
+    ],
+    "sles": [
+      "bc",
+      "libnuma1",
+      "perf",
+      "git",
+      "unzip",
+      "make",
+      "gcc",
+      "zip"
     ]
   }
 }
