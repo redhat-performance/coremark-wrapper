@@ -24,7 +24,7 @@
       "git",
       "zip"
     ],
-    "amazon": [
+    "amzn": [
       "bc",
       "numactl",
       "perf",
