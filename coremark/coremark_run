@@ -44,7 +44,7 @@ if [ ! -f "/tmp/${test_name}.out" ]; then
 	exit $rtc 
 fi
 
-curdir=`pwd`
+curdir=$(dirname $(realpath $0))
 if [[ $0 == "./"* ]]; then
 	chars=`echo $0 | awk -v RS='/' 'END{print NR-1}'`
 	if [[ $chars == 1 ]]; then
@@ -405,6 +405,8 @@ fi
 
 numb_cpus=`nproc`
 pushd coremark > /dev/null
+
+$curdir/test_tools/package_tool --no_packages $to_no_pkg_install --wrapper_config $curdir/../coremark.json
 
 # Get PCP setup if we're using it
 if [[ $to_use_pcp -eq 1 ]]; then
