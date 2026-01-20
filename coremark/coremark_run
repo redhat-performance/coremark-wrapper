@@ -27,6 +27,7 @@ coremark_version="v1.01"
 test_name="coremark"
 results_file="results_${test_name}.csv"
 arguments="$@"
+script_dir=$(realpath $(dirname $0))
 
 exit_out()
 {
@@ -417,6 +418,9 @@ if [[ $to_use_pcp -eq 1 ]]; then
 fi
 
 run_coremark
+
+$TOOLS_BIN/csv_to_json $to_json_flags --csv_file ${results_file} --output_file results_coremark.json
+$TOOLS_BIN/verify_results $to_verify_flags --schema_file $script_dir/../result_schema.py --class_name CoremarkResults --file results_coremark.json
 
 # Shutdown PCP and clean up after ourselves
 if [[ $to_use_pcp -eq 1 ]]; then
