@@ -4,4 +4,5 @@ numthreads 0
 runtime NaN
 throughput NaN
 latency NaN
+runlog NaN
 IterationsPerSec NaN

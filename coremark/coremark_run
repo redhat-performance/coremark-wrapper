@@ -139,7 +139,7 @@ execute_coremark()
 
 	#If we're using PCP, snap a chalk line at the start of the iteration
 	if [[ $to_use_pcp -eq 1 ]]; then
-        	start_pcp_subset
+		start_pcp_subset
 	fi
 
 	make -s XCFLAGS="${make_flags}"
@@ -151,13 +151,21 @@ execute_coremark()
 	# and log the iteration's result
 
 	if [[ $to_use_pcp -eq 1 ]]; then
-        	test_iters=`grep "Iterations/" run1.log | cut -d':' -f2 | sed "s/ //g"`
-		results2pcp_add_value "iteration":${iter}"
-		results2pcp_add_value "numthreads":${numthreads}"
-		results2pcp_add_value "IterationsPerSec":${test_iters}
+		test_iters=`grep "Iterations/" run1.log | cut -d':' -f2 | sed "s/ //g"`
+		results2pcp_add_value "iteration:${iter}"
+		results2pcp_add_value "runlog:1"
+		results2pcp_add_value "numthreads:${numthreads}"
+		results2pcp_add_value "IterationsPerSec:${test_iters}"
 		results2pcp_add_value_commit
 		reset_pcp_om
-	        stop_pcp_subset
+		test_iters=`grep "Iterations/" run2.log | cut -d':' -f2 | sed "s/ //g"`
+		results2pcp_add_value "iteration:${iter}"
+		results2pcp_add_value "runlog:2"
+		results2pcp_add_value "numthreads:${numthreads}"
+		results2pcp_add_value "IterationsPerSec:${test_iters}"
+		results2pcp_add_value_commit
+		reset_pcp_om
+		stop_pcp_subset
 	fi
 
 	#
@@ -416,9 +424,8 @@ $curdir/test_tools/package_tool --no_packages $to_no_pkg_install --wrapper_confi
 # Get PCP setup if we're using it
 if [[ $to_use_pcp -eq 1 ]]; then
 	source $TOOLS_BIN/pcp/pcp_commands.inc
-	ls ${run_dir}/openmetrics_${test_name}_reset.txt
-        setup_pcp
-        pcp_cfg=$TOOLS_BIN/pcp/default.cfg
+	setup_pcp
+	pcp_cfg=$TOOLS_BIN/pcp/default.cfg
 	pcpdir=/tmp/pcp_`date "+%Y.%m.%d-%H.%M.%S"`
 fi
 
