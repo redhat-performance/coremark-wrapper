@@ -112,15 +112,30 @@ install_test_tools()
 	# Check to see if the test tools directory exists.  If it does, we do not need to
 	# clone the repo.
 	#
-	if [ ! -d "$curdir/test_tools" ]; then
-		git clone $tools_git $curdir/test_tools
+	if [ ! -d "test_tools" ]; then
+		git clone $tools_git ${curdir}/test_tools
 		if [ $? -ne 0 ]; then
-			exit_out "pulling git $tools_git failed." 1
+			exit_out "Error: pulling git $tools_git failed." 1
 		fi
 	fi
+
 	if [ $show_usage -eq 1 ]; then
 		usage $1
 	fi
+}
+
+add_time_to_run_log()
+{
+	log=$1
+	start_time="$2"
+	end_time="$3"
+
+	wfile=`mktemp /tmp/coremark_wrk.XXXXX`
+	echo "start_time: $start_time" > $wfile
+	echo "end_time: $end_time" >> $wfile
+	cat $log >> $wfile
+	cp $wfile $log
+	rm $wfile
 }
 
 execute_coremark()
@@ -142,7 +157,11 @@ execute_coremark()
 		start_pcp_subset
 	fi
 
+	cm_start_time=$(retrieve_time_stamp)
 	make -s XCFLAGS="${make_flags}"
+	cm_end_time=$(retrieve_time_stamp)
+	add_time_to_run_log run1.log "$cm_start_time" "$cm_end_time"
+	add_time_to_run_log run2.log "$cm_start_time" "$cm_end_time"
 	if [ $? -ne 0 ]; then
 		exit_out "Failed: make XCFLAGS=\"${make_flags}\"" 1
 	fi
@@ -222,14 +241,16 @@ run_coremark()
 	#
 	csv_file=`mktemp /tmp/coremark_csv.XXXXX`
 	for i in  `ls run*log`; do
+		start_time=`grep "^start_time:" $i | cut -d' ' -f 2`
+		end_time=`grep "^end_time:" $i | cut -d' ' -f 2`
 		iteration=`echo $i | cut -d'=' -f2 | cut -d'_' -f1`
 		threads=`echo $i | cut -d'=' -f3 | cut -d'.' -f1`
-		test_iters=`grep "Iterations/" $i | cut -d':' -f2 | sed "s/ //g"`
-		echo ${iteration}:${threads}:${test_iters} >> $csv_file
+		tests_iters=`grep "Iterations/" $i | cut -d':' -f2 | sed "s/ //g"`
+		data_string=$(build_data_string $iteration $threads $tests_iters $start_time $end_time)
+		echo $data_string >> $csv_file
 	done
-	$TOOLS_BIN/test_header_info --front_matter --results_file $results_file --host $to_configuration --sys_type $to_sys_type --tuned $to_tuned_setting --results_version $coremark_version --test_name $test_name
+	$TOOLS_BIN/test_header_info --front_matter --results_file $results_file --host $to_configuration --sys_type $to_sys_type --tuned $to_tuned_setting --results_version $coremark_version --test_name $test_name --field_header "iteration,threads,IterationsPerSec"
 
-	echo "iteration:threads:IterationsPerSec" >> $results_file
 	sort -n $csv_file >> $results_file
 	rm $csv_file
 }
