@@ -158,7 +158,6 @@ execute_coremark()
 	fi
 
 	cm_start_time=$(retrieve_time_stamp)
-	echo cm_start_time $cm_start_time
 	make -s XCFLAGS="${make_flags}"
 	cm_end_time=$(retrieve_time_stamp)
 	add_time_to_run_log run1.log "$cm_start_time" "$cm_end_time"
