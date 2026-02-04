@@ -406,7 +406,7 @@ fi
 numb_cpus=`nproc`
 pushd coremark > /dev/null
 
-$TOOLS_BIN/package_tool --no_packages $to_no_pkg_install --wrapper_config $curdir/../coremark.json
+package_tool --no_packages $to_no_pkg_install --wrapper_config $curdir/../coremark.json
 
 # Get PCP setup if we're using it
 if [[ $to_use_pcp -eq 1 ]]; then
