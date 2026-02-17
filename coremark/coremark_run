@@ -72,13 +72,16 @@ show_usage=0
 cpu_add=0
 powers_2=0
 
+TOOLS_BIN="$HOME/test_tools"
+export TOOLS_BIN
+
 usage()
 {
 	echo "Usage $1:"
 	echo "  --commit <n>: git commit to use, default is the tag ${coremark_version}"
 	echo "  --cpu_add <n>: starting at cpu count of 1, add this number of cpus to each run"
 	echo "  --powers_2s: starting at 1, run the number of cpus by powers of 2's"
-	source $curdir/test_tools/general_setup --usage
+	source $TOOLS_BIN/general_setup --usage
 	exit 0
 }
 
@@ -112,8 +115,8 @@ install_test_tools()
 	# Check to see if the test tools directory exists.  If it does, we do not need to
 	# clone the repo.
 	#
-	if [ ! -d "test_tools" ]; then
-		git clone $tools_git ${curdir}/test_tools
+	if [ ! -d "$TOOLS_BIN" ]; then
+		git clone $tools_git "$TOOLS_BIN"
 		if [ $? -ne 0 ]; then
 			exit_out "Error: pulling git $tools_git failed." 1
 		fi
@@ -147,7 +150,7 @@ execute_coremark()
 	#
 	# Ubuntu breaking without this setting.
 	#
-	if [[ "`$curdir/test_tools/detect_os`" == "ubuntu" ]]; then
+	if [[ "`$TOOLS_BIN/detect_os`" == "ubuntu" ]]; then
 		declare -x PORT_DIR="linux64"
 	fi
 	make_flags="-DMULTITHREAD=${2} -DUSE_PTHREAD -pthread"
@@ -321,7 +324,7 @@ generate_results()
 	else
 		echo Ran > test_results_report
 	fi
-	${curdir}/test_tools/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report,${pcpdir}" --results $results_file --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
+	${TOOLS_BIN}/save_results --curdir $curdir --home_root $to_home_root --other_files "*_summary,run*log,test_results_report,${pcpdir}" --results $results_file --test_name coremark --tuned_setting=$to_tuned_setting --version $coremark_version --user $to_user
 	popd > /dev/null
 }
 
@@ -343,10 +346,10 @@ install_test_tools "$@"
 #
 
 pushd $curdir 2> /dev/null
-source $curdir/test_tools/general_setup "$@"
+source "$TOOLS_BIN/general_setup" "$@"
 popd 2> /dev/null
 # Gather hardware information
-$curdir/test_tools/gather_data ${curdir}
+$TOOLS_BIN/gather_data ${curdir}
 
 ARGUMENT_LIST=(
 	"commit"
@@ -440,7 +443,7 @@ fi
 numb_cpus=`nproc`
 pushd coremark > /dev/null
 
-$curdir/test_tools/package_tool --no_packages $to_no_pkg_install --wrapper_config $curdir/../coremark.json
+package_tool --no_packages $to_no_pkg_install --wrapper_config $curdir/../coremark.json
 
 # Get PCP setup if we're using it
 if [[ $to_use_pcp -eq 1 ]]; then
