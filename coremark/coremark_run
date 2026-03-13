@@ -85,6 +85,40 @@ usage()
 	exit 0
 }
 
+attempt_tools_wget()
+{
+        if [[ ! -d "$TOOLS_BIN" ]]; then
+                wget ${tools_git}/archive/refs/heads/main.zip
+                if [[ $? -eq 0 ]]; then
+                        unzip -q main.zip
+                        mv test_tools-wrappers-main ${TOOLS_BIN}
+                        rm main.zip
+                fi
+        fi
+}
+
+attetmpt_tools_curl()
+{
+        if [[ ! -d "$TOOLS_BIN" ]]; then
+                curl -L -O ${tools_git}/archive/refs/heads/main.zip
+                if [[ $? -eq 0 ]]; then
+                        unzip -q main.zip
+                        mv test_tools-wrappers-main ${TOOLS_BIN}
+                        rm main.zip
+                fi
+        fi
+}
+
+attempt_tools_git()
+{
+        if [[ ! -d "$TOOLS_BIN" ]]; then
+                git clone $tools_git "$TOOLS_BIN"
+                if [ $? -ne 0 ]; then
+                        exit_out "Error: pulling git $tools_git failed." 1
+                fi
+        fi
+}
+
 install_test_tools()
 {
 	#
@@ -115,12 +149,9 @@ install_test_tools()
 	# Check to see if the test tools directory exists.  If it does, we do not need to
 	# clone the repo.
 	#
-	if [ ! -d "$TOOLS_BIN" ]; then
-		git clone $tools_git "$TOOLS_BIN"
-		if [ $? -ne 0 ]; then
-			exit_out "Error: pulling git $tools_git failed." 1
-		fi
-	fi
+	attempt_tools_wget
+	attetmpt_tools_curl
+	attempt_tools_git
 
 	if [ $show_usage -eq 1 ]; then
 		usage $1
