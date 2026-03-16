@@ -82,7 +82,41 @@ usage()
 	echo "  --cpu_add <n>: starting at cpu count of 1, add this number of cpus to each run"
 	echo "  --powers_2s: starting at 1, run the number of cpus by powers of 2's"
 	source $TOOLS_BIN/general_setup --usage
-	exit 0
+	exit $E_USAGE
+}
+
+attempt_tools_wget()
+{
+        if [[ ! -d "$TOOLS_BIN" ]]; then
+                wget ${tools_git}/archive/refs/heads/main.zip
+                if [[ $? -eq 0 ]]; then
+                        unzip -q main.zip
+                        mv test_tools-wrappers-main ${TOOLS_BIN}
+                        rm main.zip
+                fi
+        fi
+}
+
+attempt_tools_curl()
+{
+        if [[ ! -d "$TOOLS_BIN" ]]; then
+                curl -L -O ${tools_git}/archive/refs/heads/main.zip
+                if [[ $? -eq 0 ]]; then
+                        unzip -q main.zip
+                        mv test_tools-wrappers-main ${TOOLS_BIN}
+                        rm main.zip
+                fi
+        fi
+}
+
+attempt_tools_git()
+{
+        if [[ ! -d "$TOOLS_BIN" ]]; then
+                git clone $tools_git "$TOOLS_BIN"
+                if [ $? -ne 0 ]; then
+                        exit_out "Error: pulling git $tools_git failed." 101
+                fi
+        fi
 }
 
 install_test_tools()
@@ -115,12 +149,9 @@ install_test_tools()
 	# Check to see if the test tools directory exists.  If it does, we do not need to
 	# clone the repo.
 	#
-	if [ ! -d "$TOOLS_BIN" ]; then
-		git clone $tools_git "$TOOLS_BIN"
-		if [ $? -ne 0 ]; then
-			exit_out "Error: pulling git $tools_git failed." 1
-		fi
-	fi
+	attempt_tools_wget
+	attempt_tools_curl
+	attempt_tools_git
 
 	if [ $show_usage -eq 1 ]; then
 		usage $1
@@ -166,7 +197,7 @@ execute_coremark()
 	add_time_to_run_log run1.log "$cm_start_time" "$cm_end_time"
 	add_time_to_run_log run2.log "$cm_start_time" "$cm_end_time"
 	if [ $? -ne 0 ]; then
-		exit_out "Failed: make XCFLAGS=\"${make_flags}\"" 1
+		exit_out "Failed: make XCFLAGS=\"${make_flags}\"" $E_GENERAL
 	fi
 
 	# If we're using PCP, snap the chalk line at the end of the iteration
@@ -403,7 +434,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [ $powers_2 -ne 0 ] && [ $cpu_add -ne 0 ]; then
-	exit_out "Error, can not designate both cpu_add and powers_2" 1
+	exit_out "Error, can not designate both cpu_add and powers_2" $E_GENERAL
 fi
 
 if [ -d /${to_home_root}/${to_user} ]; then
@@ -424,17 +455,17 @@ else
 	if [[ $commit == "none" ]]; then
 		GIT_TERMINAL_PROMPT=0 git clone --depth 1 --branch ${coremark_version} https://github.com/eembc/coremark
 		if [ $? -ne 0 ]; then
-			exit_out "Failed: git clone --depth 1 --branch ${coremark_version} https://github.com/eembc/coremark" 1
+			exit_out "Failed: git clone --depth 1 --branch ${coremark_version} https://github.com/eembc/coremark" $E_GENERAL
 		fi
 	else
 		GIT_TERMINAL_PROMPT=0 git clone https://github.com/eembc/coremark
 		if [ $? -ne 0 ]; then
-			exit_out "Failed: git clone https://github.com/eembc/coremark" 1
+			exit_out "Failed: git clone https://github.com/eembc/coremark" $E_GENERAL
 		fi
 		pushd coremark > /dev/null
 		GIT_TERMINAL_PROMPT=0 git checkout ${commit}
 		if [ $? -ne 0 ]; then
-			exit_out "Failed: git checkout ${commit}" 1
+			exit_out "Failed: git checkout ${commit}" $E_GENERAL
 		fi
 		popd > /dev/null
 	fi
@@ -465,5 +496,4 @@ fi
 
 generate_results
 
-exit 0
-
+exit $E_SUCCESS
