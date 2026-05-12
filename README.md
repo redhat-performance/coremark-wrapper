@@ -30,19 +30,23 @@ General test_tools options:
   --home_parent <value>: Parent home directory. If not set, defaults to current working directory.
   --host_config <value>: Host configuration name, defaults to current hostname.
   --iterations <value>: Number of times to run the test, defaults to 1.
-  --run_label <value>: Label to associate with the pbench run. No default setting.
-  --run_user: User that is actually running the test on the test system. Defaults to current user.
-  --sys_type: Type of system working with (aws, azure, hostname). Defaults to hostname.
-  --sysname: Name of the system running, used in determining config files. Defaults to hostname.
-  --tuned_setting: Used in naming the results directory. For RHEL, defaults to current active tuned profile.
+  --iteration_default <value>: Value to set iterations to, if default is not set.
+  --run_label <value>: Label for the test run.
+  --run_user <value>: User that is actually running the test on the test system. Defaults to current user.
+  --sys_type <value>: Type of system working with (aws, azure, hostname). Defaults to hostname.
+  --sysname <value>: Name of the system running, used in determining config files. Defaults to hostname.
+  --tuned_setting <value>: Used in naming the results directory. For RHEL, defaults to current active tuned profile.
       For non-RHEL systems, defaults to 'none'.
   --use_pcp: Enable Performance Co-Pilot monitoring during test execution.
   --tools_git <value>: Git repo to retrieve the required tools from.
       Default: https://github.com/redhat-performance/test_tools-wrappers
+  --test_tools_release <value>: Version tag of test_tools to use.
   --no_pkg_install: Skip package installation (don't use dnf/yum/apt).
-  --pbench: Run via pbench-user-benchmark.
+  --no_system_packages: Skip system package manager installation (dnf/yum/apt).
+  --no_pip_packages: Skip Python pip package installation.
   --json_skip: Skip JSON conversion of CSV results.
   --verify_skip: Skip result verification against schema.
+  --debug: Enable bash -x output for debugging.
   --usage: Display usage information.
 ```
 
