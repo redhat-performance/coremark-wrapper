@@ -35,7 +35,7 @@
       "git",
       "zip"
     ],
-    "azure": [
+    "azurelinux": [
       "bc",
       "numactl",
       "perf",
