@@ -35,6 +35,18 @@
       "git",
       "zip"
     ],
+    "azure": [
+      "bc",
+      "numactl",
+      "perf",
+      "unzip",
+      "make",
+      "sed",
+      "gawk",
+      "gcc",
+      "git",
+      "zip"
+    ],
     "sles": [
       "bc",
       "libnuma1",
