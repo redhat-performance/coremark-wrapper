@@ -50,7 +50,6 @@
     "sles": [
       "bc",
       "libnuma1",
-      "perf",
       "git",
       "unzip",
       "make",
