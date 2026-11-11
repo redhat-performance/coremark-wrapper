@@ -97,7 +97,7 @@ attempt_tools_wget()
 				rm main.zip
 			fi
 		else
-			wget ${tools_git}/archive/refs/tags/${tools_vers}
+			wget ${tools_git}/archive/refs/tags/${tools_vers}.zip
 			if [[ $? -eq 0 ]]; then
 				unzip ${tools_vers}.zip
 				rm ${tools_vers}.zip
@@ -116,7 +116,7 @@ attempt_tools_curl()
 				rm main.zip
 			fi
 		else
-			curl -L -O ${tools_git}/archive/refs/tags/${tools_vers}
+			curl -L -O ${tools_git}/archive/refs/tags/${tools_vers}.zip
 			unzip ${tools_vers}.zip
 			rm ${tools_vers}.zip
 		fi
