@@ -22,6 +22,9 @@
 # set of default run parameters based on the system configuration.
 #
 
+tools_git=""
+tools_vers=""
+
 commit="none"
 coremark_version="v1.01"
 test_name="coremark"
@@ -72,8 +75,7 @@ show_usage=0
 cpu_add=0
 powers_2=0
 
-TOOLS_BIN="$HOME/test_tools"
-export TOOLS_BIN
+TOOLS_BIN=""
 
 usage()
 {
@@ -87,36 +89,58 @@ usage()
 
 attempt_tools_wget()
 {
-        if [[ ! -d "$TOOLS_BIN" ]]; then
-                wget ${tools_git}/archive/refs/heads/main.zip
-                if [[ $? -eq 0 ]]; then
-                        unzip -q main.zip
-                        mv test_tools-wrappers-main ${TOOLS_BIN}
-                        rm main.zip
-                fi
-        fi
+	if command -v wget &> /dev/null; then
+		if [[ $tools_vers == "" ]] then
+			wget ${tools_git}/archive/refs/heads/main.zip
+			if [[ $? -eq 0 ]]; then
+				unzip -q main.zip
+				rm main.zip
+			fi
+		else
+			wget ${tools_git}/archive/refs/tags/${tools_vers}
+			if [[ $? -eq 0 ]]; then
+				unzip ${tools_vers}.zip
+				rm ${tools_vers}.zip
+			fi
+		fi
+	fi
 }
 
 attempt_tools_curl()
 {
-        if [[ ! -d "$TOOLS_BIN" ]]; then
-                curl -L -O ${tools_git}/archive/refs/heads/main.zip
-                if [[ $? -eq 0 ]]; then
-                        unzip -q main.zip
-                        mv test_tools-wrappers-main ${TOOLS_BIN}
-                        rm main.zip
-                fi
-        fi
+	if command -v curl &> /dev/null; then
+		if [[ $tools_vers == "" ]] then
+			curl -L -O ${tools_git}/archive/refs/heads/main.zip
+			if [[ $? -eq 0 ]]; then
+				unzip -q main.zip
+				rm main.zip
+			fi
+		else
+			curl -L -O ${tools_git}/archive/refs/tags/${tools_vers}
+			unzip ${tools_vers}.zip
+			rm ${tools_vers}.zip
+		fi
+	fi
 }
 
 attempt_tools_git()
 {
-        if [[ ! -d "$TOOLS_BIN" ]]; then
-                git clone $tools_git "$TOOLS_BIN"
-                if [ $? -ne 0 ]; then
-                        exit_out "Error: pulling git $tools_git failed." 101
-                fi
-        fi
+	if command -v git &> /dev/null; then
+		if [[ $tools_vers == "" ]]; then
+			git clone $tools_git "$TOOLS_BIN"
+			if [ $? -ne 0 ]; then
+				exit_out "Error: pulling git $tools_git failed." 101
+			fi
+		else
+			git clone --branch ${tools_vers} $tools_git "$TOOLS_BIN"
+			if [ $? -ne 0 ]; then
+				exit_out "Error: pulling git $tools_git failed." 101
+			fi
+		fi
+	else
+		exit_out "Error:  all attempts to install test_tools failed" 101
+		return
+	fi
 }
 
 install_test_tools()
@@ -126,12 +150,22 @@ install_test_tools()
 	#
 	tools_git=https://github.com/redhat-performance/test_tools-wrappers
 	found=0
+	TOOLS_BIN=${HOME}/test_tools-wrappers-main
+	pushd ${HOME} > /dev/null
 	for arg in "$@"; do
-		if [ $found -eq 1 ]; then
+		if [ $found -eq 2 ]; then
 			tools_git=$arg
 			found=0
 		fi
 		if [[ $arg == "--tools_git" ]]; then
+			found=2
+		fi
+		if [ $found -eq 1 ]; then
+			tools_vers=$arg
+			TOOLS_BIN=${HOME}/test_tools-wrappers-${tools_vers}
+			found=0
+		fi
+		if [[ $arg == "--tools_vers" ]]; then
 			found=1
 		fi
 
@@ -144,14 +178,20 @@ install_test_tools()
 			show_usage=1
 		fi
 	done
+	export TOOLS_BIN
 
 	#
 	# Check to see if the test tools directory exists.  If it does, we do not need to
 	# clone the repo.
 	#
-	attempt_tools_wget
-	attempt_tools_curl
-	attempt_tools_git
+	install_tools="attempt_tools_wget attempt_tools_curl attempt_tools_git"
+	for install in $install_tools; do
+		if [[ -d $TOOLS_BIN ]]; then
+			break
+		fi
+		$install
+	done
+	popd > /dev/null
 
 	if [ $show_usage -eq 1 ]; then
 		usage $1
